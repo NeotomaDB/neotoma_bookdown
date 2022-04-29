@@ -1,0 +1,14 @@
+--- 
+title: "Neotoma Paleoecology Manual v2.0"
+author: "Simon Goring"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+rmd_files: ["index.Rmd", "01-neotoma_introduction.Rmd", "sql_quickly.Rmd", "db_design_concepts.Rmd", "neotoma_tables.Rmd", "tables_taxa.Rmd"]
+output:
+  bookdown::gitbook: default
+documentclass: book
+bibliography: "references.bib"
+biblio-style: apalike
+link-citations: yes
+delete_merged_file: true
+---

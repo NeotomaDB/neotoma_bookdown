@@ -1,0 +1,4 @@
+bookdown
+DBI
+RPostgres
+jsonlite

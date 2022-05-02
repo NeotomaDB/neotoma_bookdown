@@ -16,8 +16,8 @@ Throughput this document we will use `AS` statemements to help us write our SQL 
 library(RPostgreSQL)
 library(jsonlite)
 dbLogin <- fromJSON('connect_remote.json')
-db <- dbConnect(dbDriver("PostgreSQL"),
-                 dbname = dbLogin$dbname, 
+db <- DBI::dbConnect(RPostgres::Postgres(),
+                 dbname = dbLogin$database, 
                  host = dbLogin$host, 
                  port = dbLogin$port, 
                  user= dbLogin$user, 

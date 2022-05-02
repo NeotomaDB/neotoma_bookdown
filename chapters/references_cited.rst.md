@@ -1,6 +1,4 @@
----
-title: References Cited
----
+# References
 
 American Ornithologists\' Union. 1983. Check-list of North American
 birds, seventh edition. American Ornithologists\' Union, Washington,
@@ -105,14 +103,14 @@ COHMAP Members. 1988. Climatic changes of the last 18,000 years:
 observations and model simulations. Science 241:1043-1052.
 
 Cole, K. L., M. B. Davis, F. Stearns, K. Walker, and G. Guntenspergen.
-1998. Historical landcover changes in the Great Lakes region. Pages
+1.    Historical landcover changes in the Great Lakes region. Pages
 43-50 *in* T. D. Sisk, editor. Perspectives on the land use history of
 North America: a context for understanding our changing environment.
 Biological Science Report USGS/BRD/BSR 1998-0003. United States
 Geological Survey, Biological Resources Division.
 
 Committee on Ungulate Management in Yellowstone National Park, N. R. C.
-2002. Ecological dynamics on Yellowstone\'s northern range. National
+1.    Ecological dynamics on Yellowstone\'s northern range. National
 Academy Press, Washington, D.C., USA.
 
 Comps, B., D. Gömöry, J. Letouzey, B. Thiébaut, and R. J. Petit. 2001.
@@ -120,7 +118,7 @@ Diverging trends between heterozygosity and allelic richness during
 postglacial colonization in the European beech. Genetics 157:389-397.
 
 Czaplewski, N. J., J. I. Mead, C. J. Bell, W. D. Peachey, and T.-L. Ku.
-1999. Papago Springs Cave revisited, part II: vertebrate paleofauna.
+1.    Papago Springs Cave revisited, part II: vertebrate paleofauna.
 Occasional Papers of the Oklahoma Museum of Natural History 5:1-41.
 
 Czaplewski, N. J., W. L. Puckette, and C. Russell. 2002. A Pleistocene
@@ -205,7 +203,7 @@ extinction: a critical review of the evidence. Journal of World
 Prehistory 16:313-359.
 
 Guiot, J., J. J. Boreux, P. Braconnot, F. Torre, and PMIP participants.
-1999. Data-model comparison using fuzzy logic in paleoclimatology.
+1.    Data-model comparison using fuzzy logic in paleoclimatology.
 Climate Dynamics 15:569-581.
 
 Hallett, D. J., L. V. Hills, and J. J. Clague. 1997. New accelerator
@@ -391,7 +389,7 @@ plants in Europe 13,000--1,000 years. Journal of Biogeography
 12:519-525.
 
 Stevens, P. F. 2007+. Angiosperm Phylogeny Website. Version 8, June
-2007. \[<http://www.mobot.org/MOBOT/research/APweb/>\]
+1.    \[<http://www.mobot.org/MOBOT/research/APweb/>\]
 
 Stuiver, M., and P. J. Reimer. 1993. Extended ^14^C database and revised
 CALIB radiocarbon calibration program. Radiocarbon 35:215-230.
@@ -473,11 +471,6 @@ Wilson, D. E., and D. M. Reeder. 2005. Mammal species of the world: a
 taxonomic and geographic reference, third edition, 2 volumes. The Johns
 Hopkins University Press, Baltimore, Maryland, USA.
 \[<http://www.bucknell.edu/msw3/>\]
-
-Wright, H. E., Jr., J. E. Kutzbach, T. Webb, III, W. F. Ruddiman, F. A.
-Street-Perrott, and P. J. Bartlein, editors. 1993. Global climates since
-the last glacial maximum, volumes. University of Minnesota Press,
-Minneapolis.
 
 Wroe, S., J. Field, R. Fullagar, and L. S. Jermiin. 2004. Megafaunal
 extinction in the late Quaternary and the global overkill hypothesis.

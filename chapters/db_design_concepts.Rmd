@@ -116,7 +116,7 @@ refers to the Depositional Environment of the site today, for example, «», «F
 
 Any of these Depositional Environments may be assigned to a Collection Unit, but because they are hierarchical, Collection Units may be grouped at higher levels, for example, all Collection Units from natural lakes. The top level Depositional Environments, with some examples, are:
 
-```{sql topleveldepenv connection=db}
+```{sql, topleveldepenv, connection=db}
 SELECT depenvt AS "Depositional Environment" 
 FROM ndb.depenvttypes 
 WHERE depenvtid = depenvthigherid 

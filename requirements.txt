@@ -2,3 +2,4 @@ bookdown
 DBI
 RPostgres
 jsonlite
+DT

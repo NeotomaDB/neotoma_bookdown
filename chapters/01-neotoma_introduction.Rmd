@@ -10,7 +10,7 @@ The Neotoma database was initially designed by Eric C. Grimm and implemented in 
 
 ## Whence Neotoma
 
-| ![Image of a packrat](assets/Neotoma_magister.jpg) |
+| ![Image of a packrat](assets/images/Neotoma_magister.jpg) |
 |:--:|
 | A packrat of the genus *Neotoma*. Credit: Alan Cressler, CC BY-SA 2.0 <https://creativecommons.org/licenses/by-sa/2.0>, via Wikimedia Commons |
 

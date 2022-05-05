@@ -4,30 +4,15 @@
 
 Ecological groups represent a method for organizing or representing taxa.  The ecological group to which a taxon belongs depends both on the taxon and the dataset type.  Taxa are assigned to sets of Ecological Groups. A taxon may be assigned to more than one Ecological Group, representing different schemes for organizing taxa.
 
-  ------------------------- ---------------- ---------- ------------------
-  **EcolGroups**                                        
+```{r, ecolgroupstable, echo=FALSE}
+showTable(db, 'ecolgroups')
+```
 
-  TaxonID                   Long Integer     PK, FK     Taxa
+* **TaxonID (Primary Key, Foreign Key)**: Taxon identification number. The field links to the [`taxa`](#Taxa) table.
 
-  EcolSetID                 Long Integer     PK, FK     EcolSetTypes
+* **EcolSetID (Primary Key, Foreign Key)**: Ecological Set identification number. Field links to the [`ecolsettypes`](#EcolSetTypes) table.
 
-  EcolGroupID               Text             FK         EcolGroupTypes
-  ------------------------- ---------------- ---------- ------------------
-
-**TaxonID (Primary Key, Foreign Key)**
-
-:   Taxon identification number. The field links to the
-    [`taxa`](#Taxa) table.
-
-**EcolSetID (Primary Key, Foreign Key)**
-
-:   Ecological Set identification number. Field links to the
-    [`ecolsettypes`](#EcolSetTypes) table.
-
-**EcolGroupID (Foreign Key)**
-
-:   A four-letter Ecological Group identification code. Field links to
-    the [`ecolgrouptypes`](#EcolGroupTypes) table.
+* **EcolGroupID (Foreign Key)**: A four-letter Ecological Group identification code. Field links to the [`ecolgrouptypes`](#EcolGroupTypes) table.
 
 ### SQL Example
 
@@ -70,247 +55,69 @@ WHERE egt.ecolgroup = 'Sirenia';
 ## ecolgrouptypes {#EcolGroupTypes}
 
 Lookup table of Ecological Group Types. The table is referenced by the
-`ecolgroups`{.interpreted-text role="ref"} table.
+[`ecolgroups`](#EcolGroups) table.
 
-  ----------------------------- -------- ------ ------
-  **EcolWeGroupTypes**                            
+```{r, ecolgrouptypestable, echo=FALSE}
+showTable(db, 'ecolgrouptypes')
+```
 
-  EcolGroupID                   Text     PK      
-
-  EcolGroup                     Text             
-  ----------------------------- -------- ------ ------
-
-**EcolGroupID (Primary Key)**
-
-:   An arbitrary Ecological Group identification number.
-
-**EcolGroup**
-
-:   Ecological Group.
+* **EcolGroupID (Primary Key)**: An arbitrary Ecological Group identification number.
+* **EcolGroup**: Ecological Group.
 
 ## ecolsettypes {#EcolSetTypes}
 
-Lookup table of Ecological Set Types. The table is referenced by the
-`EcolGroups`{.interpreted-text role="ref"} table.
+Lookup table of Ecological Set Types. The table is referenced by the [`ecolgroups`](#EcolGroups) table.
 
-  --------------------------- ---------------- ------ ------
-  **EcolSetTypes**                                    
+```{r, ecolsettypestable, echo=FALSE}
+showTable(db, 'ecolsettypes')
+```
 
-  EcolSetID                   Long Integer     PK      
-
-  EcolSetName                 Text                     
-  --------------------------- ---------------- ------ ------
-
-**EcolSetID (Primary Key)**
-
-:   An arbitrary Ecological Set identification number.
-
-**EcolSetName** The Ecological Set name.
+* **EcolSetID (Primary Key)**: An arbitrary Ecological Set identification number.
+* **EcolSetName**: The Ecological Set name.
 
 ## synonyms {#Synonyms}
 
 This table lists common synonyms for taxa in the [`taxa`](#Taxa) table. No effort has been made to provide a complete taxonomic synonymy, but rather to list synonyms commonly used in recent literature.
 
-  ----------------------- ---------------- ------ ----------------
-  **Table: Synonyms**                             
+```{r, synonymstable, echo=FALSE}
+showTable(db, 'synonyms')
+```
 
-  SynonymID               Long Integer     PK      
-
-  SynonymName             Text                     
-
-  TaxonID                 Long Integer     FK     Taxa
-
-  PublicationID           Long Integer     FK     Publications
-
-  SynonymTypeID           Long Integer     FK     SynonymTypes
-
-  Notes                   Memo                     
-  ----------------------- ---------------- ------ ----------------
-
-**SynonymID (Primary Key)**
-
-:   An arbitrary synonym identification number.
-
-**SynonymName**
-
-:   Name of the synonym.
-
-**TaxonID (Foreign Key)**
-
-:   The accepted taxon name in Neotoma. This field links to
-    `Taxa`{.interpreted-text role="ref"} table.
-
-**PublicationID (Foreign Key)**
-
-:   Published authority for synonymy. Field links to
-    `Publications`{.interpreted-text role="ref"} table.
-
-**SynonymTypeID (Foreign Key)**
-
-:   Type of synonym. Field links to the [SynonymTypes]{.title-ref}
-    lookup table.
-
-**Notes**
-
-:   Free form notes or comments about the synonymy.
+* **SynonymID (Primary Key)**: An arbitrary synonym identification number.
+* **SynonymName**:   Name of the synonym.
+* **TaxonID (Foreign Key)**: The accepted taxon name in Neotoma. This field links to the [`taxa`](#Taxa) table.
+* **PublicationID (Foreign Key)**: Published authority for synonymy. Field links to [`publications`](#Publications) table.
+* **SynonymTypeID (Foreign Key)**: Type of synonym. Field links to the [`synonymtypes`](#SynonymTypes) lookup table.
+* **Notes**: Free form notes or comments about the synonymy.
 
 ## synonymtypes {#SynonymTypes}
-============
 
 Lookup table of Synonym Types. Table is referenced by the
 [`synonyms`](#Synonyms) table.
 
-  --------------------------- ---------------- ------ ------
-  **Table: SynonymTypes**                             
+```{r, synonymtypestable, echo=FALSE}
+showTable(db, 'synonymtypes')
+```
 
-  SynonymTypeID               Long Integer     PK      
-
-  SynonymType                 Text                     
-  --------------------------- ---------------- ------ ------
-
-**SynonymTypeID (Primary Key)**
-
-:   An arbitrary Synonym Type identification number.
-
-**SynonymType**
-
-:   Synonym type. Below are some examples:
-
-    **nomenclatural, homotypic, or objective synonym**
-
-    :   a synonym that unambiguously refers to the same taxon,
-        particularly one with the same description or type specimen.
-        These synonyms are particularly common above the species level.
-        For example, Gramineae = Poaceae, *Clethrionomys gapperi* =
-        *Myodes gapperi*. The term «objective» is used in zoology,
-        whereas «nomenclatural» or «homotypic» is used in botany.
-
-    **taxonomic, heterotypic, or subjective synonym**
-
-    :   a synonym typically based on a different type specimen, but
-        which is now regarded as the same taxon as the senior synonym.
-        For example, *Iva ciliata* = *Iva annua*. The term «subjective»
-        is used in zoology, whereas «taxonomic» or «heterotypic» is used
-        in botany.
-
-    **genus merged into another genus**
-
-    :   heterotypic or subjective synonym; a genus has been merged into
-        another genus and has not been retained at a subgeneric rank.
-        This synonymy may apply to either the generic or specific level,
-        for example: *Petalostemon* = *Dalea*, *Petalostemon purpureus*
-        = *Dalea purpurea*.
-
-    **family merged into another family**
-
-    :   Heterotypic or subjective synonym; a family has been merged into
-        another family and has not been retained at a subfamilial rank.
-        For example, the Taxodiaceae has been merged with the
-        Cupressaceae. This synonymy creates issues for data entry,
-        because palynologically the Taxodiaceae *sensu stricto* is
-        sometimes distinguishable from the Cupressaceae sensu stricto.
-        If a pollen type was identified as «Cupressaceae/Taxodiaceae»,
-        then synonymizing to «Cupressaceae» results in no loss of
-        information. However, synonymizing «Taxodiaceae» to
-        «Cupressaceae» potentially does. In this case, consultation with
-        the original literature or knowledge of the local biogeography
-        may point to a logical name change that will retain the
-        precision of the original identification. For example, in the
-        southeastern , «Taxodiaceae» can be changed to «*Taxodium*» or
-        «*Taxodium*-type» in most situations. If «Cupressaceae» was also
-        identified, then it should be changed to «Cupressaceae undiff.»
-        or possibly «Juniperus-type» if other Cupressaceae such as
-        Chamaecyperus are unlikely.
-
-    **rank change: species reduced to subspecific rank**
-
-    :   heterotypic or subjective synonym; a species has been reduced to
-        a subspecies or variety of another species. These synonyms may
-        be treated in two different ways, depending on the situation or
-        protocols of the contributing data cooperative: (1) The taxon is
-        reduced to the subspecific rank (e.g. *Alnus* *fruticosa* =
-        *Alnus viridis* subsp. *fruticosa*, *Canis familiaris* = *Canis
-        lupus familiaris*), either because the fossils can be assigned
-        to the subspecies based on morphology, as is likely the case
-        with the domestic dog, *Canis lupus familiaris*, or because the
-        subspecies can be assigned confidently based on
-        biogeography. (2) The taxon is changed to the new taxon and the
-        subspecific rank is dropped because the fossil is not
-        distinguishable at the subspecific level. For example, *Alnus
-        rugosa* = *Alnus incana* subsp. *rugosa*, but may simply be
-        changed to *Alnus incana* because the pollen of *A. incana*
-        subsp. *rugosa* and *A. incana* subsp. *incana* are
-        indistinguishable morphologically.
-
-    **rank change: genus reduced to subgenus**
-
-    :   heterotypic or subjective synonym; a genus has been reduced to
-        subgeneric rank in another family. At the generic level, this
-        synonymy is clear from the naming conventions, e.g. *Mictomys* =
-        *Synaptomys (Mictomys)*; however, at the species level it is
-        not, e.g. *Mictomys borealis* = *Synaptomys borealis*.
-
-    **rank change: family reduced to subfamily**
-
-    :   heterotypic or subjective synonym; a family has been reduced to
-        subfamily rank in another family. By botanical convention the
-        family name is retained, e.g. Pyrolaceae = Ericaceae subf.
-        Monotropoideae; whereas by zoological convention it is not, e.g.
-        Desmodontidae = Desmodontinae.
-
-    **rank change: subspecific rank elevated to species**
-
-    :   heterotypic or subjective synonym; a subspecies or variety has
-        been raised to the species rank, e.g. *Ephedra fragilis* subsp.
-        *campylopoda* = *Ephedra foeminea*.
-
-    **rank change: subgeneric rank elevated to genus**
-
-    :   heterotypic or subjective synonym; a subgenus or other
-        subgeneric rank has been raised to the generic rank. At the
-        subgeneric level, this synonymy is clear from the naming
-        conventions, e.g. *Potamogeton* subg. *Coleogeton* =
-        *Stuckenia*; however, at the species level it is not, e.g.
-        *Potamogeton pectinatus* = *Stuckenia pectinata*.
-
-    **rank change: subfamily elevated to family**
-
-    :   heterotypic or subjective synonym; a subfamily has been raised
-        to the family rank, e.g. Liliaceae subf. Amaryllidoideae =
-        Amaryllidaceae, Pampatheriinae = Pampatheriidae.
-
-    **rank elevated because of taxonomic uncertainty**
-
-    :   because the precise taxonomic identification is uncertain, the
-        rank has been raised to a level that includes the universe of
-        possible taxa. A common cause of such uncertainty is taxonomic
-        splitting subsequent to the original identification, in which
-        case the originally identified taxon is now a much smaller
-        group. For example, the genus *Psoralea* has been divided into
-        several genera; the genus *Psoralea* still exists, but now
-        includes a much smaller number of species. Consequently, in the
-        database *Psoralea* has been synonymized with Fabaceae tribe
-        Psoraleeae, which includes the former *Psoralea* sensu lato. A
-        zoological example is *Mustela* sp. The genus *Mustela* formerly
-        included the minks, which have now been separated into the genus
-        *Neovison*. Consequently, *Mustela* sp. = *Mustela/Neovison* sp.
-
-    **globally monospecific genus**
-
-    :   Although identified at the genus level, specimens assigned to
-        this genus can be further assigned to the species level because
-        the genus is monospecific.
-
-    **globally monogeneric family**
-
-    :   although identified at the family level, specimens assigned to
-        this family can be further assigned to the genus level because
-        the family is monogeneric.
+* **SynonymTypeID (Primary Key)**: An arbitrary Synonym Type identification number.
+* **SynonymType**: Synonym type. Below are some examples:
+  * **nomenclatural, homotypic, or objective synonym**:   a synonym that unambiguously refers to the same taxon, particularly one with the same description or type specimen. These synonyms are particularly common above the species level. For example, Gramineae = Poaceae, *Clethrionomys gapperi* = *Myodes gapperi*. The term «objective» is used in zoology, whereas «nomenclatural» or «homotypic» is used in botany.
+  * **taxonomic, heterotypic, or subjective synonym**: a synonym typically based on a different type specimen, but which is now regarded as the same taxon as the senior synonym. For example, *Iva ciliata* = *Iva annua*. The term «subjective» is used in zoology, whereas «taxonomic» or «heterotypic» is used in botany.
+  * **genus merged into another genus**: heterotypic or subjective synonym; a genus has been merged into another genus and has not been retained at a subgeneric rank. This synonymy may apply to either the generic or specific level, for example: *Petalostemon* = *Dalea*, *Petalostemon purpureus* = *Dalea purpurea*.
+  * **family merged into another family**:   Heterotypic or subjective synonym; a family has been merged into another family and has not been retained at a subfamilial rank. For example, the Taxodiaceae has been merged with the Cupressaceae. This synonymy creates issues for data entry, because palynologically the Taxodiaceae *sensu stricto* is sometimes distinguishable from the Cupressaceae sensu stricto. If a pollen type was identified as «Cupressaceae/Taxodiaceae», then synonymizing to «Cupressaceae» results in no loss of information. However, synonymizing «Taxodiaceae» to «Cupressaceae» potentially does. In this case, consultation with the original literature or knowledge of the local biogeography may point to a logical name change that will retain the precision of the original identification. For example, in the southeastern , «Taxodiaceae» can be changed to «*Taxodium*» or «*Taxodium*-type» in most situations. If «Cupressaceae» was also identified, then it should be changed to «Cupressaceae undiff.» or possibly «Juniperus-type» if other Cupressaceae such as Chamaecyperus are unlikely.
+  * **rank change: species reduced to subspecific rank**: heterotypic or subjective synonym; a species has been reduced to a subspecies or variety of another species. These synonyms may be treated in two different ways, depending on the situation or protocols of the contributing data cooperative: (1) The taxon is reduced to the subspecific rank (e.g. *Alnus* *fruticosa* = *Alnus viridis* subsp. *fruticosa*, *Canis familiaris* = *Canis lupus familiaris*), either because the fossils can be assigned to the subspecies based on morphology, as is likely the case with the domestic dog, *Canis lupus familiaris*, or because the subspecies can be assigned confidently based on biogeography. (2) The taxon is changed to the new taxon and the subspecific rank is dropped because the fossil is not distinguishable at the subspecific level. For example, *Alnus rugosa* = *Alnus incana* subsp. *rugosa*, but may simply be changed to *Alnus incana* because the pollen of *A. incana* subsp. *rugosa* and *A. incana* subsp. *incana* are indistinguishable morphologically.
+  * **rank change: genus reduced to subgenus**: heterotypic or subjective synonym; a genus has been reduced to subgeneric rank in another family. At the generic level, this synonymy is clear from the naming conventions, e.g. *Mictomys* = *Synaptomys (Mictomys)*; however, at the species level it is not, e.g. *Mictomys borealis* = *Synaptomys borealis*.
+  * **rank change: family reduced to subfamily**: heterotypic or subjective synonym; a family has been reduced to subfamily rank in another family. By botanical convention the family name is retained, e.g. Pyrolaceae = Ericaceae subf. Monotropoideae; whereas by zoological convention it is not, e.g. Desmodontidae = Desmodontinae.
+  * **rank change: subspecific rank elevated to species**: heterotypic or subjective synonym; a subspecies or variety has been raised to the species rank, e.g. *Ephedra fragilis* subsp. *campylopoda* = *Ephedra foeminea*.
+  * **rank change: subgeneric rank elevated to genus**:   heterotypic or subjective synonym; a subgenus or other subgeneric rank has been raised to the generic rank. At the subgeneric level, this synonymy is clear from the naming conventions, e.g. *Potamogeton* subg. *Coleogeton* = *Stuckenia*; however, at the species level it is not, e.g. *Potamogeton pectinatus* = *Stuckenia pectinata*.
+  * **rank change: subfamily elevated to family**: heterotypic or subjective synonym; a subfamily has been raised to the family rank, e.g. Liliaceae subf. Amaryllidoideae = Amaryllidaceae, Pampatheriinae = Pampatheriidae.
+  * **rank elevated because of taxonomic uncertainty**: because the precise taxonomic identification is uncertain, the rank has been raised to a level that includes the universe of possible taxa. A common cause of such uncertainty is taxonomic splitting subsequent to the original identification, in which case the originally identified taxon is now a much smaller group. For example, the genus *Psoralea* has been divided into several genera; the genus *Psoralea* still exists, but now includes a much smaller number of species. Consequently, in the database *Psoralea* has been synonymized with Fabaceae tribe Psoraleeae, which includes the former *Psoralea* sensu lato. A zoological example is *Mustela* sp. The genus *Mustela* formerly included the minks, which have now been separated into the genus *Neovison*. Consequently, *Mustela* sp. = *Mustela/Neovison* sp.
+  * **globally monospecific genus**: Although identified at the genus level, specimens assigned to this genus can be further assigned to the species level because the genus is monospecific.
+  * **globally monogeneric family**: although identified at the family level, specimens assigned to this family can be further assigned to the genus level because the family is monogeneric.
 
 ### SQL Example
 
-This query provides the preferred synonym in the database for *Bison alleni* along with the published authority for the synonymy and the
-notes in the database on the rationale for the synonymy. The notes indicate some potential problems with this synonymy.
+This query provides the preferred synonym in the database for *Bison alleni* along with the published authority for the synonymy and the notes in the database on the rationale for the synonymy. The notes indicate some potential problems with this synonymy.
 
 ```{sql, BisonTaxonExample, connection=db}
 SELECT 
@@ -327,108 +134,22 @@ WHERE syntx.taxonname = 'Bison alleni';
 
 ## taxa {#Taxa}
 
-This table lists all taxa in the database. Most taxa are biological
-taxa; however, some are biometric measures and some are physical
-parameters.
+This table lists all taxa in the database. Most taxa are biological taxa; however, some are biometric measures and some are physical parameters.
 
-  ------------------- ---------------- ------ ------------------
-  **Table: Taxa**                             
+```{r, taxatable, echo=FALSE}
+showTable(db, 'taxa')
+```
 
-  TaxonID             Long Integer     PK      
-
-  TaxonCode           Text                     
-
-  TaxonName           Text                     
-
-  Author              Text                     
-
-  HigherTaxonID       Long Integer            Taxa:TaxonID
-
-  Extinct             Yes/No                   
-
-  TaxaGroupID         Text             FK     TaxaGroupTypes
-
-  PublicationID       Long Integer     FK     Publications
-
-  Notes               Memo                     
-  ------------------- ---------------- ------ ------------------
-
-**TaxonID (Primary Key)**
-
-:   An arbitrary Taxon identification number.
-
-**TaxonCode**
-
-:   A code for the Taxon. These codes are useful for other software or
-    output for which the complete name is too long. Because of the very
-    large number of taxa, codes can be duplicated for different Taxa
-    Groups. In general, these various Taxa Groups are analyzed
-    separately, and no duplication will occur within a dataset. However,
-    if Taxa Groups are combined, unique codes can be generated by
-    prefixing with the TaxaGroupID, For example, VPL:Cle (*Clethra*) and
-    MAM:Cle (*Clethrionomys*)
-
-    A set of conventions has been established for codes. In some cases
-    conventions differ depending on whether the organism is covered by
-    rules of botanical nomenclature (BN) or zoological nomenclature
-    (ZN).
-
-    **Genus**
-
-    :   Three-letter code, first letter capitalized, generally the first
-        three unless already used: **Ace** (*Acer*) or **Cle**
-        (*Clethrionomys*).
-
-    **Subgenus**
-
-    :   The genus code plus a two-letter subgenus code, first letter
-        capitalized, separated by a period: **Pin.Pi** (*Pinus* subg.
-        *Pinus*) or **Syn.Mi** (*Synaptomys (Mictomys)*).
-
-    **Species**
-
-    :   The genus code plus a two-letter, lower-case species code,
-        separated by a period: **Ace.sa** (*Acer saccharum*), **Ace.sc**
-        (*Acer saccharinum*), or **Cle.ga** (*Clethrionomys gapperi*)
-
-    **Subspecies or variety**
-
-    :   The species code a two-letter, lower-case subspecies code,
-        separated by a period: **Aln.vi.si** (*Alnus viridis* subsp.
-        *sinuata*), or **Bis.bi.an** (*Bison bison antiquus*)
-
-    **Family**
-
-    :   Six-letter code, first letter capitalized, consisting of three
-        letters followed by «eae» (BN) or «dae» (ZN): **Roseae**
-        (Rosaceae), or **Bovdae** (Bovidae)
-
-    **Subfamily or tribe**
-
-    :   (BN) Family code plus two-letter subfamily code, first letter
-        capitalized, separated by a period. (ZN) Six-letter code, first
-        letter capitalized, consisting of three letters followed by
-        «nae»: **Asteae.As** (Asteraceae subf. Asteroideae),
-        **Asteae.Cy** (Asteraceae tribe Cynarea), or **Arvnae**
-        Arvicolinae.
-
-    **Order**
-
-    :   (BN) Six-letter code, first letter capitalized, consisting of
-        three letters followed by «les». (ZN) Six-letter code, first
-        letter capitalized, consisting of three letters, followed by the
-        last three letters of the order name, unless the order name is
-        ≤6 letters long, in which case the code = the order name.
-        Zoological orders do not have a common ending: **Ercles**
-        (Ericales), **Artyla** (Artiodactyla), or **Rodtia** (Rodentia).
-
-    **Taxonomic levels higher than order**
-
-    :   Six-letter code, first letter capitalized, consisting of three
-        letters, followed by the last three letters of the order name,
-        unless the order name is ≤6 letters long, in which case the code
-        = the order name: **Magida** (Magnoliopsida), **Magyta**
-        (Magnoliophyta), or **Mamlia** (Mammalia).
+* **TaxonID (Primary Key)**: An arbitrary Taxon identification number.
+* **TaxonCode**: A code for the Taxon. These codes are useful for other software or output for which the complete name is too long. Because of the very large number of taxa, codes can be duplicated for different Taxa Groups. In general, these various Taxa Groups are analyzed separately, and no duplication will occur within a dataset. However, if Taxa Groups are combined, unique codes can be generated by prefixing with the TaxaGroupID, For example, VPL:Cle (*Clethra*) and    MAM:Cle (*Clethrionomys*). A set of conventions has been established for codes. In some cases conventions differ depending on whether the organism is covered by rules of botanical nomenclature (BN) or zoological nomenclature (ZN).
+  * **Genus**:   Three-letter code, first letter capitalized, generally the first three unless already used: **Ace** (*Acer*) or **Cle** (*Clethrionomys*).
+  * **Subgenus**:   The genus code plus a two-letter subgenus code, first letter capitalized, separated by a period: **Pin.Pi** (*Pinus* subg. *Pinus*) or **Syn.Mi** (*Synaptomys (Mictomys)*).
+  * **Species**:   The genus code plus a two-letter, lower-case species code, separated by a period: **Ace.sa** (*Acer saccharum*), **Ace.sc** (*Acer saccharinum*), or **Cle.ga** (*Clethrionomys gapperi*)
+  * **Subspecies or variety**: The species code a two-letter, lower-case subspecies code, separated by a period: **Aln.vi.si** (*Alnus viridis* subsp. *sinuata*), or **Bis.bi.an** (*Bison bison antiquus*)
+  * **Family**: Six-letter code, first letter capitalized, consisting of three letters followed by «eae» (BN) or «dae» (ZN): **Roseae** (Rosaceae), or **Bovdae** (Bovidae)
+  * **Subfamily or tribe**: (BN) Family code plus two-letter subfamily code, first letter capitalized, separated by a period. (ZN) Six-letter code, first letter capitalized, consisting of three letters followed by «nae»: **Asteae.As** (Asteraceae subf. Asteroideae), **Asteae.Cy** (Asteraceae tribe Cynarea), or **Arvnae** Arvicolinae.
+  * **Order**: (BN) Six-letter code, first letter capitalized, consisting of three letters followed by «les». (ZN) Six-letter code, first letter capitalized, consisting of three letters, followed by the last three letters of the order name, unless the order name is ≤6 letters long, in which case the code = the order name. Zoological orders do not have a common ending: **Ercles** (Ericales), **Artyla** (Artiodactyla), or **Rodtia** (Rodentia).
+  * **Taxonomic levels higher than order**: Six-letter code, first letter capitalized, consisting of three letters, followed by the last three letters of the order name, unless the order name is ≤6 letters long, in which case the code = the order name: **Magida** (Magnoliopsida), **Magyta** (Magnoliophyta), or **Mamlia** (Mammalia).
 
     **Types**
 
@@ -706,13 +427,9 @@ parameters.
 
 Lookup table for Taxa Group Types. This table is referenced by the [`taxa`](#Taxa) table.
 
-  ----------------------------- -------- ------ ------
-  **TaxaGroupTypes**                            
-
-  TaxaGroupID                   Text     PK      
-
-  TaxaGroup                     Text             
-  ----------------------------- -------- ------ ------
+```{r, taxagrouptypeptable, echo=FALSE}
+showTable(db, 'taxagrouptypes')
+```
 
 **TaxaGroupID (Primary Key)**
 
@@ -729,26 +446,11 @@ LIMIT 5;
 
 ## Variables {#Variables}
 
-This table lists Variables, which always consist of a Taxon and Units of
-measurement. Variables can also have Elements, Contexts, and
-Modifications. Thus, the same taxon with different measurement units
-(e.g. present/absent, NISP, MNI) are different Variables.
+This table lists **variables**, which always consist of a *taxon* (linked by a **taxonid**) and units of measurement. Variables can also have [variable elements](#VariableElements), [variable contexts](#VariableContexts), and [variable modifications](#VariableModifications). Thus, the same taxon with different measurement units (e.g. present/absent, NISP, MNI) are different Variables.
 
-  ------------------------ --------------- ------ -----------------------
-  **Table: Variables**                            
-
-  VariableID               Long Integer    PK      
-
-  TaxonID                  Long Integer    FK     Taxa
-
-  VariableElementID        Long Integer    FK     VariableElements
-
-  VaribleUnitsID           Long Integer    FK     VariableUnits
-
-  VariableContextID        Long Integer    FK     VariableContexts
-
-  VariableModificationID   Long Integer    FK     VariableModifications
-  ------------------------ --------------- ------ -----------------------
+```{r, variabletable, echo=FALSE}
+showTable(db, 'variables')
+```
 
 **VariableID (Primary Key)**
 
@@ -781,8 +483,7 @@ Modifications. Thus, the same taxon with different measurement units
 
 ### SQL Example
 
-This query lists the Variables for «*Zea mays*» with elements and
-measurement units.
+This query lists the different variables expressions for *Zea mays* with elements and measurement units:
 
 ``` {sql, getMeasurements, connection=db}
 SELECT 
@@ -886,65 +587,30 @@ Result:
 
 ## VariableContexts {#VariableContexts}
 
-Variable Contexts lookup table. Table is referenced by the
-`Variables`{.interpreted-text role="ref"} table.
+Variable Contexts lookup table. Table is referenced by the [variables](#Variables) table.
 
-  ------------------------------- ---------------- ------ ------
-  **Table: VariableContexts**                             
+```{r, variablecontexttable, echo=FALSE}
+showTable(db, 'variablecontexts')
+```
 
-  VariableContextID               Long Integer     PK      
-
-  VariableContext                 Text                     
-  ------------------------------- ---------------- ------ ------
-
-**VariableContextID (Primary Key)**
-
-:   An arbitrary Variable Context identification number.
-
-**VariableContext**
-
-:   Depositional context. Examples are:
-
-    **anachronic**
-
-    :   A specimen older than the primary deposit, e.g. a Paleozoic
-        spore in a Holocene deposit. The specimen may be redeposited
-        from the catchment, or may be derived from long distance, e.g.
-        Tertiary pollen grains in Quaternary sediments with no local
-        Tertiary source. A Pleistocene specimen in a Holocene
-        archaeological deposit, possibly resulting from aboriginal
-        fossil collecting, would also be anachronic.
-
-    **intrusive**
-
-    :   A specimen, generally younger than the primary deposit, *e.g*. a
-        domestic pig in an otherwise Pleistocene deposit.
-
-    **redeposited**
-
-    :   A specimen older than the primary deposit and assumed to have
-        been redeposited from a local source by natural causes.
-
-    **articulated**
-
-    :   An articulated skeleton
-
-    **clump**
-
-    :   A clump, esp. of pollen grains
+* **VariableContextID (Primary Key)**
+  * An arbitrary Variable Context identification number.
+* **VariableContext**
+  * Depositional context. Examples are:
+    * **anachronic**: A specimen older than the primary deposit, e.g. a Paleozoic spore in a Holocene deposit. The specimen may be redeposited from the  catchment, or may be derived from long distance, e.g. Tertiary pollen grains in Quaternary sediments with no local Tertiary source. A Pleistocene specimen in a Holocene archaeological deposit, possibly resulting from aboriginal fossil collecting, would also be anachronic.
+    * **intrusive**: A specimen, generally younger than the primary deposit, *e.g*. a domestic pig in an otherwise Pleistocene deposit.
+    * **redeposited**: A specimen older than the primary deposit and assumed to have been redeposited from a local source by natural causes.
+    * **articulated**: An articulated skeleton
+    * **clump**: A clump, esp. of pollen grains
 
 ## VariableElements {#VariableElements}
 
 Lookup table of Variable Elements. Table is referenced by the
-`Variables`{.interpreted-text role="ref"} table.
+[variables](#Variables) table.
 
-  ------------------------------- ---------------- ------ ------
-  **Table: VariableElements**                             
-
-  VariableElementID               Long Integer     PK      
-
-  VariableElement                 Text                     
-  ------------------------------- ---------------- ------ ------
+```{r, variableelementstable, echo=FALSE}
+showTable(db, 'variableelements')
+```
 
 **VariableElementID (Primary Key)** An arbitrary Variable Element
 identification number.
@@ -970,15 +636,11 @@ identification number.
 ## VariableModifications {#VariableModifications}
 
 Lookup table of Variable Modifications. Table is referenced by the
-`Variables`{.interpreted-text role="ref"} table.
+[variables](#Variables) table.
 
-  ------------------------------------ ---------------- ------ ------
-  **Table: VariableModifications**                             
-
-  VariableModificationID               Long Integer     PK      
-
-  VariableModification                 Text                     
-  ------------------------------------ ---------------- ------ ------
+```{r, variablemodificationstable, echo=FALSE}
+showTable(db, 'variablemodifications')
+```
 
 **VariableModificationID (Primary Key)**
 
@@ -995,15 +657,11 @@ Lookup table of Variable Modifications. Table is referenced by the
 ## VariableUnits {#VariableUnits}
 
 Lookup table of Variable Units. Table is referenced by the
-`Variables`{.interpreted-text role="ref"} table.
+[variables](#Variables) table.
 
-  ---------------------------- ---------------- ------ ------
-  **Table: VariableUnits**                             
-
-  VariableUnitsID              Long Integer     PK      
-
-  VariableUnit                 Text                     
-  ---------------------------- ---------------- ------ ------
+```{r, variableunitstable, echo=FALSE}
+showTable(db, 'variableunits')
+```
 
 **VariableUnitsID (Primary Key)**
 
@@ -1022,21 +680,11 @@ Lookup table of Variable Units. Table is referenced by the
 
 ## RepositoryInstitutions {#RepositoryInstitutions}
 
-A lookup table of institutions that are repositories for fossil
-specimens. Table is referenced by the
-`RepositorySpecimens`{.interpreted-text role="ref"} table.
+A lookup table of institutions that are repositories for fossil specimens. Table is referenced by the [`repositoryspecimens`](#RepositorySpecimens) table.
 
-  ------------------------------------- ---------------- ------ ------
-  **Table: RepositoryInstitutions**                             
-
-  RepositoryID                          Long Integer     PK      
-
-  Acronym                               Text                     
-
-  Repository                            Text                     
-
-  Notes                                 Memo                     
-  ------------------------------------- ---------------- ------ ------
+```{r, repositoryinstitutionstable, echo=FALSE}
+showTable(db, 'repositoryinstitutions')
+```
 
 **RepositoryID (PrimaryKey)**
 
@@ -1078,16 +726,9 @@ specimens from a single Collection Unit have been reposited at different
 institutions, in which case multiple records for that Dataset occur in
 the table.
 
-  --------------------------- ------------- -------- -------------------------
-  **Table:                                           
-  RepositorySpecimens**                              
-
-  DatasetID                   Long Integer  PK, FK    Datasets
-
-  RepositoryID                Long Integer  PK, FK    RepositoryInstitutions
-
-  Notes                       Memo                    
-  --------------------------- ------------- -------- -------------------------
+```{r, repositoryspecimentstable, echo=FALSE}
+showTable(db, 'repositoryspecimens')
+```
 
 **DatasetID (Primary Key, Foreign Key)**
 
@@ -1133,51 +774,16 @@ Result:
 
 ## specimendates {#SpecimenDates}
 
-This table enables queries for dated specimens of indivual taxa.
-Although the MaterialDated field in the Geochronology table may list the
-taxa dated, this protocol is not enforced, and the field is not linked
-to the taxa table.
+This table enables queries for dated specimens of indivual taxa. Although the `materialdated` field in the [`geochronology`](#Geochronology) table may list the taxa dated, this protocol is not enforced, and the field is not linked to the [`taxa`](#Taxa) table.
 
-  ----------------------- --------- ------ --------------------
-  **Table: Synonyms**                      
+```{r, specimendatestable, echo=FALSE}
+showTable(db, 'specimendates')
+```
 
-  SpecimenDateID          int       PK      
-
-  GeochronID              int       FK     Geochronology 
-
-  TaxonID                 int       FK     Taxa
-
-  VariableElementID       int       FK     VariableElements
-
-  SampleID                int       FK     Samples
-
-  Notes                   ntext             
-  ----------------------- --------- ------ --------------------
-
-**SpecimenDateID (Primary Key)**
-
-:   An arbitrary specicimen date ID.
-
-**GeochronID (Foreign Key)**
-
-:   Geochronologic identification number. Field links to the
-    `Geochronology`{.interpreted-text role="ref"} table.
-
-**TaxonID (Foreign Key)**
-
-:   Accepted name in Neotoma. Field links to `Taxa`{.interpreted-text
-    role="ref"} table.
-
-**VariableElementID (Foreign Key)**
-
-:   Variable Element identification number. Field links to the
-    `VariableElements`{.interpreted-text role="ref"} lookup table.
-
-**SampleID (Primary Key, Foreign Key)**
-
-:   Sample ID number. Field links to the `Samples`{.interpreted-text
-    role="ref"} table.
-
-**Notes**
-
-:   Free form notes or comments about dated specimen.
+* **`specimendateid` (Primary Key)**: An arbitrary specicimen date ID.
+* **`geochronid` (Foreign Key)**: Geochronologic identification number. Field links to the [`geochronology`](#Geochronology) table.
+* **TaxonID (Foreign Key)**: Accepted name in Neotoma. Field links to [`taxa`](#Taxa) table.
+* **VariableElementID (Foreign Key)**: Variable Element identification number. Field links to the
+    [`variableelements`](#VariableElements) lookup table.
+* **SampleID (Primary Key, Foreign Key)**: Sample ID number. Field links to the [`samples`](#Samples) table.
+* **Notes**:   Free form notes or comments about dated specimen.

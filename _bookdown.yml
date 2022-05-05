@@ -9,6 +9,7 @@ rmd_files: ["index.Rmd",
             "chapters/db_design_concepts.Rmd",
             "chapters/tables/neotoma_tables.Rmd",
             "chapters/tables/tables_taxa.Rmd",
+            "chapters/tables/tables_chron.Rmd",
             "chapters/references_cited.rst.md"]
 output:
   bookdown::gitbook: default

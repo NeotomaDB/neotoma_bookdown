@@ -12,18 +12,6 @@ By convention, SQL first defines the output, using the `SELECT` statement.  The 
 
 Throughput this document we will use `AS` statemements to help us write our SQL queries neatly.  Using `AS` helps us create an alias so that we don't have to write so much in our query.  As much as possible we will use the same aliases for tables throughout this guide.  For example, `FROM ndb.sites AS st` is commonly used, where `st` becomes the alias for the `ndb.sites` table, and stands in for it elsewhere in the query. Often you will see `gpu` used for `ndb.geopoliticalunits`, or `tx` for `ndb.taxa`.  In Postgres SQL it is not neccessary to use the term `AS` (we use it here to make the queries clearer for folks just learning how to use SQL), so it's possible to see things like `ndb.sites st` in place of `ndb.sites AS st`.  Below is an example where both forms are used:
 
-```{r, configConnection, echo = FALSE}
-library(RPostgreSQL)
-library(jsonlite)
-dbLogin <- fromJSON('connect_remote.json')
-db <- DBI::dbConnect(RPostgres::Postgres(),
-                 dbname = dbLogin$database, 
-                 host = dbLogin$host, 
-                 port = dbLogin$port, 
-                 user= dbLogin$user, 
-                 password= dbLogin$password)
-```
-
 ### Query {.tabset}
 
 #### SQL Query

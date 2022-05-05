@@ -3,3 +3,4 @@ DBI
 RPostgres
 jsonlite
 DT
+ggplot2

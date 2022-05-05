@@ -38,4 +38,36 @@ if (!require("pacman")) install.packages("pacman")
 suppressPackageStartupMessages(library(pacman))
 packages <- read.delim('requirements.txt')
 p_load(char = unlist(packages))
+
+dbLogin <- fromJSON('connect_remote.json')
+db <- DBI::dbConnect(RPostgres::Postgres(),
+                 dbname = dbLogin$database, 
+                 host = dbLogin$host, 
+                 port = dbLogin$port, 
+                 user= dbLogin$user, 
+                 password= dbLogin$password)
+
+showTable <- function(db, tablename) {
+  query <- "SELECT
+                atr.attname AS column,
+                pg_catalog.format_type(atr.atttypid, atr.atttypmod) AS data_type,
+                array_to_string(array_remove(array_agg(DISTINCT con.conname), NULL), ', ') AS constraint
+            FROM
+                pg_catalog.pg_attribute AS atr
+            INNER JOIN
+                pg_catalog.pg_class AS cl ON cl.oid = atr.attrelid
+            INNER JOIN
+                pg_catalog.pg_namespace AS nsp ON nsp.oid = cl.relnamespace
+            LEFT JOIN pg_catalog.pg_constraint AS con ON con.conrelid = atr.attrelid AND atr.attnum = ANY(con.conkey)
+            WHERE
+                atr.attnum > 0
+                AND NOT atr.attisdropped
+                AND nsp.nspname = 'ndb'
+                AND cl.relname = $1
+            GROUP BY atr.attname, atr.atttypid, atr.atttypmod, atr.attnum
+            ORDER BY atr.attnum;"
+  output <- dbGetQuery(db, query, tablename)
+  DT::datatable(output, filter = 'none', rownames = FALSE, options = list(dom='ltip'))
+}
+
 ```

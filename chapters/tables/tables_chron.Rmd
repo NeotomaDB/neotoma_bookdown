@@ -107,11 +107,10 @@ showTable(db, 'chronologies')
 
 * **ChronologyID (Primary Key)**: An arbitrary Chronology identification number.
 * **CollectionUnitID (Foreign Key)**: Collection Unit to which the Chronology applies. Field links to the
-    `CollectionUnits`{.interpreted-text role="ref"} table.
-* **AgeTypeID (Foreign Key)**: Age type or units. Field links to the `AgeTypes`{.interpreted-text
-    role="ref"} table.
+    `collectionunits`[#CollectionUnits] table.
+* **AgeTypeID (Foreign Key)**: Age type or units. Field links to the `AgeTypes`{.interpreted-text     role="ref"} table.
 * **ContactID (Foreign Key)**: Person who developed the Age Model. Field links to the
-    `Contacts`{.interpreted-text role="ref"} table.
+    `contacts`[#Contacts] table.
 * **IsDefault**: Indicates whether the Chronology is a default chronology or not.
     Default status is determined by a Neotoma data steward. Collection
     Units may have more than one default Chronology, but may have only
@@ -201,11 +200,11 @@ showTable(db, 'aggregatesampleages')
 ```
 
 * **AggregateDatasetID (Primary Key, Foreign Key)**: Aggregate Dataset identification number. Field links to the
-    `AggregateDatasets`{.interpreted-text role="ref"} table.
+    `aggregatedatasets`[#AggregateDatasets] table.
 * **AggregateChronID (Primary Key, Foreign Key)**: Aggregate Chronology identification number Field links to the
-    `AggregateChronologies`{.interpreted-text role="ref"} table.
+    `aggregatechronologies`[#AggregateChronologies] table.
 * **SampleAgeID (Primary Key, Foreign Key)**: Sample Age ID number. Field links to the
-    `SampleAges`{.interpreted-text role="ref"} table.
+    `sampleages`[#SampleAges] table.
 
 ### SQL Example
 
@@ -249,12 +248,12 @@ showTable(db, 'geochronology')
 
 * **GeochronID (Primary Key)**:   An arbitrary Geochronologic identificantion number.
 * **SampleID (Foreign Key)**:   Sample identification number. Field links to [`samples`](#Samples) table.
-* **GeochronTypeID (Foreign Key)**:   Identification number for the type of Geochronologic analysis, e.g. «Carbon-14», «Thermoluminescence». Field links to the [`geochrontypes`](#GeochronTypes) table.
+* **GeochronTypeID (Foreign Key)**:   Identification number for the type of Geochronologic analysis, e.g. «Carbon-14», **Thermoluminescence**. Field links to the [`geochrontypes`](#GeochronTypes) table.
 * **AgeTypeID (Foreign Key)**:   Identification number for the age units, e.g. «Radiocarbon years BP», «Calibrated radiocarbon years BP».
 * **Age**:   Reported age value of the geochronologic measurement.
 * **ErrorOlder**: The older error limit of the age value. For a date reported with ±1 SD or σ, the ErrorOlder and ErrorYounger values are this value.
 * **ErrorYounger**:   The younger error limit of the age value.
-* **Infinite**:   Is «True» for and infinite or "greater than" geochronologic measurement, otherwise is «False».
+* **Infinite**:   Is **True** for and infinite or "greater than" geochronologic measurement, otherwise is **False**.
 * **Delta13C**:   The measured or assumed δ^13^C value for radiocarbon dates, if provided. Radiocarbon dates are assumed to be normalized to δ^13^C, and if uncorrected and normalized ages are reported, the normalized age should be entered in the database.
 * **LabNumber**:   Lab number for the geochronologic measurement.
 * **Material Dated**:   Material analyzed for a geochronologic measurement.
@@ -296,22 +295,18 @@ showTable(db, 'geochronpublications')
 ```
 
 * **GeochronID (Primary Key, Foreign Key)**: Geochronologic identification number. Field links to the
-    `Geochronology`{.interpreted-text role="ref"} table.
+    `geochronology`[#Geochronology] table.
 * **PublicationID (Primary Key, Foreign Key)**: Publication identification number. Field links to the
-    `Publications`{.interpreted-text role="ref"} table.
+    `publications`[#Publications] table.
 
 ## GeochronTypes {#GeochronTypes}
 
 Lookup table for Geochronology Types. Table is referenced by the
-`Geochronology`{.interpreted-text role="ref"} table.
+`geochronology`[#Geochronology] table.
 
-  ----------------------------------------------------
-  Field Name                   Variable Type    Key
-  ---------------------------- ---------------- ------
-  GeochronTypeID               Long Integer     PK
-
-  GeochronType                 Text             
-  ----------------------------------------------------
+```{r, geochrontypestable, echo=FALSE}
+showTable(db, 'geochrontypes')
+```
 
 * **GeochronTypeID (Primary Key)**: Geochronology Type identification number.
 * **GeochronType**: Type of Geochronologic measurement.
@@ -321,58 +316,32 @@ Lookup table for Geochronology Types. Table is referenced by the
 This table stores Publications in which Relative Ages are reported for
 CollectionUnits.
 
-  ----------------------------------------------------------------------------------------
-  Field Name                   Variable Type  Key       Reference Table
-  ---------------------------- -------------- --------- ----------------------------------
-  RelativeAgeID                Long Integer   PK, FK    `RelativeAges`{.interpreted-text
-                                                        role="ref"}
-
-  PublicationID                Long Integer   PK, FK    `Publications`{.interpreted-text
-                                                        role="ref"}
-  ----------------------------------------------------------------------------------------
+```{r, relativeagepublicationstable, echo=FALSE}
+showTable(db, 'relativeagepublications')
+```
 
 * **RelativeAgeID (Primary Key, Foreign Key)**: Relative Ages identification number. Field links to the
-    `RelativeAges`{.interpreted-text role="ref"} table.
+    `relativeages`[#RelativeAges] table.
 * **PublicationID (Primary Key, Foreign Key)**: Publication identification number. Field links to
-    `Publications`{.interpreted-text role="ref"} table.
+    `publications`[#Publications] table.
 
 ## RelativeAges {#RelativeAges}
 
 Lookup table of RelativeAges. Table is referenced by the
-`RelativeChronology`{.interpreted-text role="ref"} table.
+`relativechronology`[#RelativeChronology] table.
 
-  --------------------------------------------------------------------------------------
-  Field Name               Variable Type  Key    Reference Table
-  ------------------------ -------------- ------ ---------------------------------------
-  RelativeAgeID            Long Integer   PK      
-
-  RelativeAgeUnitID        Long Integer   FK     `RelativeAgeUnits`{.interpreted-text
-                                                 role="ref"}
-
-  RelativeAgeScaleID       Long Integer   FK     `RelativeAgeScales`{.interpreted-text
-                                                 role="ref"}
-
-  RelativeAge              Text                   
-
-  C14AgeYounger            Double                 
-
-  C14AgeOlder              Double                 
-
-  CalAgeYounger            Double                 
-
-  CalAgeOlder              Double                 
-
-  Notes                    Memo                   
-  --------------------------------------------------------------------------------------
+```{r, relativeagestable, echo=FALSE}
+showTable(db, 'relativeages')
+```
 
 * **RelativeAgeID (Primary Key)**: An arbitrary Relative Age identification number.
 * **RelativeAgeUnitID (Foreign Key)**: Relative Age Unit (e.g. «Marine isotope stage», «Land mammal age»).
-    Field links to the `RelativeAgeUnits`{.interpreted-text role="ref"}
+    Field links to the `relativeageunits`[#RelativeAgeUnits]
     lookup table.
 * **RelativeAgeScaleID (Foreign Key)**: Relative Age Scale (e.g. «Geologic time scale», «Marine isotope
     stages»). Field links to the `RelativeAgeScales`{.interpreted-text
     role="ref"} lookup table.
-* **RelativeAge**: Relative Age (e.g. «Rancholabrean», a land mammal age; «MIS 11»,
+* **RelativeAge**: Relative Age (e.g. **Rancholabrean**, a land mammal age; «MIS 11»,
     marine isotope stage 11).
 * **C14AgeYounger**: Younger age of the Relative Age unit in ^14^C yr B.P. Applies only
     to Relative Age units within the radiocarbon time scale.
@@ -438,7 +407,7 @@ showTable(db, 'relativeageunits')
     «Geologic time scale» with an example Relative Age.
 
   --------------------------- ---------------------------
-  **Geologic time scale**     
+  **Geologic time scale**
 
   **RelativeAgeUnit**         **RelativeAge Example**
 
@@ -451,12 +420,12 @@ showTable(db, 'relativeageunits')
   Informal stage              Middle Holocene
   --------------------------- ---------------------------
 
-«Period», «Epoch», and «Stage» are defined by the International
+**Period**, **Epoch**, and **Stage** are defined by the International
 Commission on Statigraphy. An «Informal stage» is defined in Neotoma.
 
 ## `relativechronology` {#RelativeChronology}
 
-This table stores relative chronologic data. Relative Ages are assigned to Analysis Units, The Relative Age data along with any possible `Geochronology`{.interpreted-text role="ref"} and `Tephrachronology`{.interpreted-text role="ref"} data are used to create a chronology.
+This table stores relative chronologic data. Relative Ages are assigned to Analysis Units, The Relative Age data along with any possible `geochronology`[#Geochronology] and `Tephrachronology`[#Tephrachronology] data are used to create a chronology.
 
 ```{r, relativechronologytable, echo=FALSE}
 showTable(db, 'relativechronology')
@@ -464,9 +433,9 @@ showTable(db, 'relativechronology')
 
 * **RelativeChronID (Primary Key)**: An arbitrary Relative Chronology identification number.
 * **AnalysisUnitID (Foreign Key)**: Analysis Unit identification number. Field links to the
-    `AnalysisUnits`{.interpreted-text role="ref"} table.
+    `AnalysisUnits`[#AnalysisUnits] table.
 * **RelativeAgeID (Foreign Key)**: Relative Age identification number. Field links to the
-    `RelativeAges`{.interpreted-text role="ref"} lookup table.
+    `RelativeAges`[#RelativeAges] lookup table.
 * **Notes**: Free form notes or comments.
 
 ## Tephrachronology {#Tephrachronology}
@@ -480,12 +449,12 @@ showTable(db, 'tephrachronologies')
 * **TephrachronID (Primary Key)** An arbitrary Tephrachronology
 identification number.
 * **AnalysisUnitID (Foreign Key)** Analysis Unit identification number.
-Field links to the `AnalysisUnits`{.interpreted-text role="ref"} table.
+Field links to the `AnalysisUnits`[#AnalysisUnits] table.
 The tephra may be contained within the AnalysisUnit, especially in
 excavations, or the AnalysisUnit may be assigned specifically to the
 tephra, particulary with cores.
 * **TephraID (Foreign Key)** Tephra identification number. Field links to
-the `Tephras`{.interpreted-text role="ref"} table.
+the `Tephras`[#Tephras] table.
 * **Notes** Free form notes or comments about the tephra.
 
 ## Tephras {#Tephras}
@@ -497,7 +466,7 @@ showTable(db, 'tephras')
 ```
 
 * **TephraID (Primary Key)**: An arbitrary Tephra identification number.
-* **TephraName**: Name of the tephra, e.g. «Mazama».
+* **TephraName**: Name of the tephra, e.g. **Mazama**.
 * **C14Age**: Age of the tephra in ^14^C yr BP. For example, Hallett et al. (1997)
     provide an estimate of the age of the Mazama tephra based on
     radiocarbon dating of plant macrofossils in lake sediments encasing

@@ -22,19 +22,19 @@ Tables for key geographic information relating to the dataset. Specifically geog
 
 Tables related to complete datasets, or collections of samples. These include Collection information, but only refer to sites, since, as described in the Design Concepts, datasets are conceptually nested within sites, even if a site contains only a single dataset.
 
-* `AggregateDatasets`{.interpreted-text role="ref"},
-* `AggregateOrderTypes`{.interpreted-text role="ref"},
-* `CollectionTypes`{.interpreted-text role="ref"},
-* `CollectionUnits`{.interpreted-text role="ref"},
-* `DatasetPublications`{.interpreted-text role="ref"},
-* `Datasets`{.interpreted-text role="ref"},
-* `DatasetSubmissions`{.interpreted-text role="ref"},
-* `DatasetSubmissionTypes`{.interpreted-text role="ref"},
-* `DatasetTypes`{.interpreted-text role="ref"},
-* `DatasetPIs`{.interpreted-text role="ref"},
-* `DepEnvtTypes`{.interpreted-text role="ref"},
-* `Lithology`{.interpreted-text role="ref"},
-* `Projects`{.interpreted-text role="ref"}.
+* `aggregatedatasets`[#AggregateDatasets],
+* `aggregateordertypes`[#AggregateOrderTypes],
+* `collectiontypes`[#CollectionTypes],
+* `collectionunits`[#CollectionUnits],
+* `datasetpublications`[#DatasetPublications],
+* `datasets`[#Datasets],
+* `datasetsubmissions`[#DatasetSubmissions],
+* `datasetsubmissiontypes`[#DatasetSubmissionTypes],
+* `datasettypes`[#DatasetTypes],
+* `datasetpis`[#DatasetPIs],
+* `depenvttypes`[#DepEnvtTypes],
+* `lithology`[#Lithology],
+* `projects`[#Projects].
 
 ## Chronology & Age Related Tables
 
@@ -42,23 +42,23 @@ Information about the age models and chronological controls used to
 assess sample ages. Includes secondary information on tephras, and
 geochronological data types.
 
-* `AgeTypes`{.interpreted-text role="ref"},
-* `AggregateChronologies`{.interpreted-text role="ref"},
-* `ChronControls`{.interpreted-text role="ref"},
-* `ChronControlTypes`{.interpreted-text role="ref"},
-* `Chronologies`{.interpreted-text role="ref"},
-* `AggregateSampleAges`{.interpreted-text role="ref"},
-* `Geochronology`{.interpreted-text role="ref"},
-* `GeochronPublications`{.interpreted-text role="ref"},
-* `GeochronTypes`{.interpreted-text role="ref"},
-* `RelativeAgePublications`{.interpreted-text role="ref"},
-* `RelativeAges`{.interpreted-text role="ref"},
-* `RadiocarbonCalibration`{.interpreted-text role="ref"},
-* `RelativeAgeScales`{.interpreted-text role="ref"},
-* `RelativeAgeUnits`{.interpreted-text role="ref"},
-* `RelativeChronology`{.interpreted-text role="ref"},
-* `Tephrachronology`{.interpreted-text role="ref"},
-* `Tephras`{.interpreted-text role="ref"}.
+* `agetypes`[#AgeTypes],
+* `aggregatechronologies`[#AggregateChronologies],
+* `chroncontrols`[#ChronControls],
+* `chroncontroltypes`[#ChronControlTypes],
+* `chronologies`[#Chronologies],
+* `aggregatesampleages`[#AggregateSampleAges],
+* `geochronology`[#Geochronology],
+* `geochronpublications`[#GeochronPublications],
+* `geochrontypes`[#GeochronTypes],
+* `relativeagepublications`[#RelativeAgePublications],
+* `relativeages`[#RelativeAges],
+* `radiocarboncalibration`[#RadiocarbonCalibration],
+* `relativeagescales`[#RelativeAgeScales],
+* `relativeageunits`[#RelativeAgeUnits],
+* `relativechronology`[#RelativeChronology],
+* `tephrachronology`[#Tephrachronology],
+* `tephras`[#Tephras].
 
 ## Sample Related Tables
 
@@ -67,16 +67,16 @@ includes the age of the sample, the data content of the sample, and
 information relating to the physical condition or situation of the
 samples themselves.
 
-* `AnalysisUnits`{.interpreted-text role="ref"},
-* `Data`{.interpreted-text role="ref"}, `DepAgents`{.interpreted-text
-* role="ref"}, `DepAgentTypes`{.interpreted-text role="ref"},
-* `SampleAges`{.interpreted-text role="ref"},
-* `SampleAnalysts`{.interpreted-text role="ref"},
-* `SampleKeywords`{.interpreted-text role="ref"},
-* `Samples`{.interpreted-text role="ref"},
-* `AggregateSamples`{.interpreted-text role="ref"},
-* `FaciesTypes`{.interpreted-text role="ref"},
-* `Keywords`{.interpreted-text role="ref"}.
+* `analysisunits`[#AnalysisUnits],
+* `data`[#Data], `depagents`{.interpreted-text
+* role="ref"}, `depagenttypes`[#DepAgentTypes],
+* `sampleages`[#SampleAges],
+* `sampleanalysts`[#SampleAnalysts],
+* `samplekeywords`[#SampleKeywords],
+* `samples`[#Samples],
+* `aggregatesamples`[#AggregateSamples],
+* `faciestypes`[#FaciesTypes],
+* `keywords`[#Keywords].
 
 ## Taxonomy Related Tables
 
@@ -101,16 +101,16 @@ morphological or phylogenetic relationships.
 
 Tables associated with individuals, institutions and organizations.
 
-* `Collectors`{.interpreted-text role="ref"},
-* `Contacts`{.interpreted-text role="ref"},
-* `ContactStatuses`{.interpreted-text role="ref"}
+* `collectors`[#Collectors],
+* `contacts`[#Contacts],
+* `contactstatuses`[#ContactStatuses]
 
 ## Publication Related Tables
 
 Information relating to the publication of primary or derived data
 within the Neotoma Paleoecological Database.
 
-* `PublicationAuthors`{.interpreted-text role="ref"},
-* `PublicationEditors`{.interpreted-text role="ref"},
-* `Publications`{.interpreted-text role="ref"},
-* `PublicationTypes`{.interpreted-text role="ref"}
+* `publicationauthors`[#PublicationAuthors],
+* `publicationeditors`[#PublicationEditors],
+* `publications`[#Publications],
+* `publicationtypes`[#PublicationTypes]

@@ -14,7 +14,7 @@ graphics: yes
 url: https://neotomadb.org
 output:
   bookdown::gitbook:
-    css: style.css
+    css: ./style.css
     config:
       toc:
         max-depth: 4

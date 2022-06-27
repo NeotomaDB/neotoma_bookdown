@@ -1,18 +1,18 @@
 # Taxonomy Related Tables
 
-## ecolgroups {#ecolgroups}
+## `ecolgroups` {#ecolgroups}
 
-Ecological groups represent a method for organizing or representing taxa.  The ecological group to which a taxon belongs depends both on the taxon and the dataset type.  Taxa are assigned to sets of Ecological Groups. A taxon may be assigned to more than one Ecological Group, representing different schemes for organizing taxa.
+Ecological groups represent a method for organizing or representing taxa. The ecological group to which a taxon belongs depends both on the taxon and the dataset type. Taxa are assigned to sets of Ecological Groups. A taxon may be assigned to more than one Ecological Group, representing different schemes for organizing taxa.
 
 ```{r, ecolgroupstable, echo=FALSE}
 showTable(db, 'ecolgroups')
 ```
 
-* **TaxonID (Primary Key, Foreign Key)**: Taxon identification number. The field links to the [`taxa`](#Taxa) table.
+* **`taxonid (primary key, foreign key)`**: Taxon identification number. The field links to the [`taxa`](#Taxa) table.
 
-* **EcolSetID (Primary Key, Foreign Key)**: Ecological Set identification number. Field links to the [`ecolsettypes`](#EcolSetTypes) table.
+* **`ecolsetid (primary key, foreign key)`**: Ecological Set identification number. Field links to the [`ecolsettypes`](#EcolSetTypes) table.
 
-* **EcolGroupID (Foreign Key)**: A four-letter Ecological Group identification code. Field links to the [`ecolgrouptypes`](#EcolGroupTypes) table.
+* **`ecolgroupid (foreign key)`**: A four-letter Ecological Group identification code. Field links to the [`ecolgrouptypes`](#EcolGroupTypes) table.
 
 ### SQL Example
 
@@ -39,7 +39,7 @@ GROUP BY
 
 ### SQL Example
 
-This query lists all the taxa in the Ecological Group «Sirenia».
+This query lists all the taxa in the Ecological Group *Sirenia*.
 
 ```{sql, SireniaGroups, connection=db}
 SELECT
@@ -52,19 +52,18 @@ FROM
 WHERE egt.ecolgroup = 'Sirenia';
 ```
 
-## ecolgrouptypes {#EcolGroupTypes}
+## `ecolgrouptypes` {#EcolGroupTypes}
 
-Lookup table of Ecological Group Types. The table is referenced by the
-[`ecolgroups`](#EcolGroups) table.
+Lookup table of Ecological Group Types. The table is referenced by the [`ecolgroups`](#EcolGroups) table.
 
 ```{r, ecolgrouptypestable, echo=FALSE}
 showTable(db, 'ecolgrouptypes')
 ```
 
-* **EcolGroupID (Primary Key)**: An arbitrary Ecological Group identification number.
-* **EcolGroup**: Ecological Group.
+* **`ecolgroupid (primary key)`**: An arbitrary Ecological Group identification number.
+* **`ecolgroup`**: Ecological Group.
 
-## ecolsettypes {#EcolSetTypes}
+## `ecolsettypes` {#EcolSetTypes}
 
 Lookup table of Ecological Set Types. The table is referenced by the [`ecolgroups`](#EcolGroups) table.
 
@@ -72,10 +71,10 @@ Lookup table of Ecological Set Types. The table is referenced by the [`ecolgroup
 showTable(db, 'ecolsettypes')
 ```
 
-* **EcolSetID (Primary Key)**: An arbitrary Ecological Set identification number.
-* **EcolSetName**: The Ecological Set name.
+* **`ecolsetid (primary key)`**: An arbitrary Ecological Set identification number.
+* **`ecolsetname`**: The Ecological Set name.
 
-## synonyms {#Synonyms}
+## `synonyms` {#Synonyms}
 
 This table lists common synonyms for taxa in the [`taxa`](#Taxa) table. No effort has been made to provide a complete taxonomic synonymy, but rather to list synonyms commonly used in recent literature.
 
@@ -83,28 +82,27 @@ This table lists common synonyms for taxa in the [`taxa`](#Taxa) table. No effor
 showTable(db, 'synonyms')
 ```
 
-* **SynonymID (Primary Key)**: An arbitrary synonym identification number.
-* **SynonymName**:   Name of the synonym.
-* **TaxonID (Foreign Key)**: The accepted taxon name in Neotoma. This field links to the [`taxa`](#Taxa) table.
-* **PublicationID (Foreign Key)**: Published authority for synonymy. Field links to [`publications`](#Publications) table.
-* **SynonymTypeID (Foreign Key)**: Type of synonym. Field links to the [`synonymtypes`](#SynonymTypes) lookup table.
-* **Notes**: Free form notes or comments about the synonymy.
+* **`synonymid (primary key)`**: An arbitrary synonym identification number.
+* **`synonymname`**:   Name of the synonym.
+* **`taxonid (foreign key)`**: The accepted taxon name in Neotoma. This field links to the [`taxa`](#Taxa) table.
+* **`publicationid (foreign key)`**: Published authority for synonymy. Field links to [`publications`](#Publications) table.
+* **`synonymtypeid (foreign key)`**: Type of synonym. Field links to the [`synonymtypes`](#SynonymTypes) lookup table.
+* **`notes`**: Free form notes or comments about the synonymy.
 
-## synonymtypes {#SynonymTypes}
+## `synonymtypes` {#SynonymTypes}
 
-Lookup table of Synonym Types. Table is referenced by the
-[`synonyms`](#Synonyms) table.
+Lookup table of Synonym Types. Table is referenced by the [`synonyms`](#Synonyms) table.
 
 ```{r, synonymtypestable, echo=FALSE}
 showTable(db, 'synonymtypes')
 ```
 
-* **SynonymTypeID (Primary Key)**: An arbitrary Synonym Type identification number.
-* **SynonymType**: Synonym type. Below are some examples:
-  * **nomenclatural, homotypic, or objective synonym**:   a synonym that unambiguously refers to the same taxon, particularly one with the same description or type specimen. These synonyms are particularly common above the species level. For example, Gramineae = Poaceae, *Clethrionomys gapperi* = *Myodes gapperi*. The term «objective» is used in zoology, whereas «nomenclatural» or «homotypic» is used in botany.
-  * **taxonomic, heterotypic, or subjective synonym**: a synonym typically based on a different type specimen, but which is now regarded as the same taxon as the senior synonym. For example, *Iva ciliata* = *Iva annua*. The term «subjective» is used in zoology, whereas «taxonomic» or «heterotypic» is used in botany.
+* **`synonymtypeid (primary key)`**: An arbitrary Synonym Type identification number.
+* **`synonymtype`**: Synonym type. Below are some examples:
+  * **nomenclatural, homotypic, or objective synonym**:   a synonym that unambiguously refers to the same taxon, particularly one with the same description or type specimen. These synonyms are particularly common above the species level. For example, Gramineae = Poaceae, *Clethrionomys gapperi* = *Myodes gapperi*. The term *objective* is used in zoology, whereas *nomenclatural* or *homotypic* is used in botany.
+  * **taxonomic, heterotypic, or subjective synonym**: a synonym typically based on a different type specimen, but which is now regarded as the same taxon as the senior synonym. For example, *Iva ciliata* = *Iva annua*. The term *subjective* is used in zoology, whereas *taxonomic* or *heterotypic* is used in botany.
   * **genus merged into another genus**: heterotypic or subjective synonym; a genus has been merged into another genus and has not been retained at a subgeneric rank. This synonymy may apply to either the generic or specific level, for example: *Petalostemon* = *Dalea*, *Petalostemon purpureus* = *Dalea purpurea*.
-  * **family merged into another family**:   Heterotypic or subjective synonym; a family has been merged into another family and has not been retained at a subfamilial rank. For example, the Taxodiaceae has been merged with the Cupressaceae. This synonymy creates issues for data entry, because palynologically the Taxodiaceae *sensu stricto* is sometimes distinguishable from the Cupressaceae sensu stricto. If a pollen type was identified as «Cupressaceae/Taxodiaceae», then synonymizing to «Cupressaceae» results in no loss of information. However, synonymizing «Taxodiaceae» to «Cupressaceae» potentially does. In this case, consultation with the original literature or knowledge of the local biogeography may point to a logical name change that will retain the precision of the original identification. For example, in the southeastern , «Taxodiaceae» can be changed to «*Taxodium*» or «*Taxodium*-type» in most situations. If «Cupressaceae» was also identified, then it should be changed to «Cupressaceae undiff.» or possibly «Juniperus-type» if other Cupressaceae such as Chamaecyperus are unlikely.
+  * **family merged into another family**:   Heterotypic or subjective synonym; a family has been merged into another family and has not been retained at a subfamilial rank. For example, the Taxodiaceae has been merged with the Cupressaceae. This synonymy creates issues for data entry, because palynologically the Taxodiaceae *sensu stricto* is sometimes distinguishable from the Cupressaceae sensu stricto. If a pollen type was identified as *Cupressaceae/Taxodiaceae*, then synonymizing to *Cupressaceae* results in no loss of information. However, synonymizing *Taxodiaceae* to *Cupressaceae* potentially does. In this case, consultation with the original literature or knowledge of the local biogeography may point to a logical name change that will retain the precision of the original identification. For example, in the southeastern , *Taxodiaceae* can be changed to **Taxodium** or **Taxodium*-type* in most situations. If *Cupressaceae* was also identified, then it should be changed to *Cupressaceae undiff.* or possibly *Juniperus-type* if other Cupressaceae such as Chamaecyperus are unlikely.
   * **rank change: species reduced to subspecific rank**: heterotypic or subjective synonym; a species has been reduced to a subspecies or variety of another species. These synonyms may be treated in two different ways, depending on the situation or protocols of the contributing data cooperative: (1) The taxon is reduced to the subspecific rank (e.g. *Alnus* *fruticosa* = *Alnus viridis* subsp. *fruticosa*, *Canis familiaris* = *Canis lupus familiaris*), either because the fossils can be assigned to the subspecies based on morphology, as is likely the case with the domestic dog, *Canis lupus familiaris*, or because the subspecies can be assigned confidently based on biogeography. (2) The taxon is changed to the new taxon and the subspecific rank is dropped because the fossil is not distinguishable at the subspecific level. For example, *Alnus rugosa* = *Alnus incana* subsp. *rugosa*, but may simply be changed to *Alnus incana* because the pollen of *A. incana* subsp. *rugosa* and *A. incana* subsp. *incana* are indistinguishable morphologically.
   * **rank change: genus reduced to subgenus**: heterotypic or subjective synonym; a genus has been reduced to subgeneric rank in another family. At the generic level, this synonymy is clear from the naming conventions, e.g. *Mictomys* = *Synaptomys (Mictomys)*; however, at the species level it is not, e.g. *Mictomys borealis* = *Synaptomys borealis*.
   * **rank change: family reduced to subfamily**: heterotypic or subjective synonym; a family has been reduced to subfamily rank in another family. By botanical convention the family name is retained, e.g. Pyrolaceae = Ericaceae subf. Monotropoideae; whereas by zoological convention it is not, e.g. Desmodontidae = Desmodontinae.
@@ -132,7 +130,7 @@ FROM ndb.taxa AS tx
 WHERE syntx.taxonname = 'Bison alleni';
 ```
 
-## taxa {#Taxa}
+## `taxa` {#Taxa}
 
 This table lists all taxa in the database. Most taxa are biological taxa; however, some are biometric measures and some are physical parameters.
 
@@ -140,290 +138,51 @@ This table lists all taxa in the database. Most taxa are biological taxa; howeve
 showTable(db, 'taxa')
 ```
 
-* **TaxonID (Primary Key)**: An arbitrary Taxon identification number.
-* **TaxonCode**: A code for the Taxon. These codes are useful for other software or output for which the complete name is too long. Because of the very large number of taxa, codes can be duplicated for different Taxa Groups. In general, these various Taxa Groups are analyzed separately, and no duplication will occur within a dataset. However, if Taxa Groups are combined, unique codes can be generated by prefixing with the TaxaGroupID, For example, VPL:Cle (*Clethra*) and    MAM:Cle (*Clethrionomys*). A set of conventions has been established for codes. In some cases conventions differ depending on whether the organism is covered by rules of botanical nomenclature (BN) or zoological nomenclature (ZN).
+* **`taxonid (primary key)`**: An arbitrary Taxon identification number.
+* **`taxoncode`**: A code for the Taxon. These codes are useful for other software or output for which the complete name is too long. Because of the very large number of taxa, codes can be duplicated for different Taxa Groups. In general, these various Taxa Groups are analyzed separately, and no duplication will occur within a dataset. However, if Taxa Groups are combined, unique codes can be generated by prefixing with the TaxaGroupID, For example, **VPL:Cle** (*Clethra*) and **MAM:Cle** (*Clethrionomys*). A set of conventions has been established for codes. In some cases conventions differ depending on whether the organism is covered by rules of botanical nomenclature (BN) or zoological nomenclature (ZN).
   * **Genus**:   Three-letter code, first letter capitalized, generally the first three unless already used: **Ace** (*Acer*) or **Cle** (*Clethrionomys*).
   * **Subgenus**:   The genus code plus a two-letter subgenus code, first letter capitalized, separated by a period: **Pin.Pi** (*Pinus* subg. *Pinus*) or **Syn.Mi** (*Synaptomys (Mictomys)*).
   * **Species**:   The genus code plus a two-letter, lower-case species code, separated by a period: **Ace.sa** (*Acer saccharum*), **Ace.sc** (*Acer saccharinum*), or **Cle.ga** (*Clethrionomys gapperi*)
   * **Subspecies or variety**: The species code a two-letter, lower-case subspecies code, separated by a period: **Aln.vi.si** (*Alnus viridis* subsp. *sinuata*), or **Bis.bi.an** (*Bison bison antiquus*)
-  * **Family**: Six-letter code, first letter capitalized, consisting of three letters followed by «eae» (BN) or «dae» (ZN): **Roseae** (Rosaceae), or **Bovdae** (Bovidae)
-  * **Subfamily or tribe**: (BN) Family code plus two-letter subfamily code, first letter capitalized, separated by a period. (ZN) Six-letter code, first letter capitalized, consisting of three letters followed by «nae»: **Asteae.As** (Asteraceae subf. Asteroideae), **Asteae.Cy** (Asteraceae tribe Cynarea), or **Arvnae** Arvicolinae.
-  * **Order**: (BN) Six-letter code, first letter capitalized, consisting of three letters followed by «les». (ZN) Six-letter code, first letter capitalized, consisting of three letters, followed by the last three letters of the order name, unless the order name is ≤6 letters long, in which case the code = the order name. Zoological orders do not have a common ending: **Ercles** (Ericales), **Artyla** (Artiodactyla), or **Rodtia** (Rodentia).
+  * **Family**: Six-letter code, first letter capitalized, consisting of three letters followed by *eae* (BN) or *dae* (ZN): **Roseae** (Rosaceae), or **Bovdae** (Bovidae)
+  * **Subfamily or tribe**: (BN) Family code plus two-letter subfamily code, first letter capitalized, separated by a period. (ZN) Six-letter code, first letter capitalized, consisting of three letters followed by *nae*: **Asteae.As** (Asteraceae subf. Asteroideae), **Asteae.Cy** (Asteraceae tribe Cynarea), or **Arvnae** Arvicolinae.
+  * **Order**: (BN) Six-letter code, first letter capitalized, consisting of three letters followed by *les*. (ZN) Six-letter code, first letter capitalized, consisting of three letters, followed by the last three letters of the order name, unless the order name is ≤6 letters long, in which case the code = the order name. Zoological orders do not have a common ending: **Ercles** (Ericales), **Artyla** (Artiodactyla), or **Rodtia** (Rodentia).
   * **Taxonomic levels higher than order**: Six-letter code, first letter capitalized, consisting of three letters, followed by the last three letters of the order name, unless the order name is ≤6 letters long, in which case the code = the order name: **Magida** (Magnoliopsida), **Magyta** (Magnoliophyta), or **Mamlia** (Mammalia).
+  * **Types**:   The conventional taxon code followed by *-type*: **Aln.in-t** (*Alnus incana*-type), **Amb-t** (*Ambrosia*-type)
+  * **cf.**: *cf.* is placed in the proper position: **Odc.cf.he** (*Odocoileus* cf. *O. hemionus*), **cf.Odc.he** (cf. *Odocoileus hemionus*), or **cf.Odc** (cf. *Odocoileus*).
+  * **aff.**: *aff.* is abbreviated to *af.*: **af.Can.di** (aff. *Canis dirus*)
+  * **?**: *?* is placed in the proper position. **?Pro.lo** (?*Procyon lotor*)
+  * **Alternative names**:   A slash is placed between the conventional abbreviations for the alternative taxa: **Ost/Cpn** (*Ostrya/Carpinus*), or **Mstdae/Mepdae** (Mustelidae/Mephitidae)
+  * **Undifferentiated taxa**: (BN) *.ud* is added to the code. (ZN) *.sp* is added to the code: **Aln.ud** (*Alnus* undiff.), **Roseae.ud** (Rosaceae undiff.), **Mms.sp** (*Mammuthus* sp.), or **Taydae.sp** (*Tayassuidae* sp.).
+  * **Parenthetic modifiers**:   The conventional taxon code with an appropriate abbreviation for the modifier separated by periods. Multiple modifiers also separated by periods. Abbreviations for pollen morphological modifiers follow Iversen and Troels-Smith (1950): **Raneae.C3** (Ranunculaceae (tricolpate)), **Raneae.Cperi** (Ranunculaceae (pericolpate)), **Pineae.ves.ud** (Pinaceae (vesiculate) undiff.), **Myteae.Csyn.psi** (Myrtaceae (syncolpate, psilate)), **Bet.\>20µ** (*Betula* (\>20 µm))
+  * **Non-biological taxa**:   Use appropriate abbreviations: **bulk.dens** (Bulk density), **LOI** Loss-on-ignition, **Bet.pol.diam** (*Betula* mean pollen-grain diameter).
+* **`taxonname`**: Name of the taxon. Most TaxonNames are biological taxa; however, some are biometric measures and some are physical parameters. In addition, some biological taxa may have parenthetic non-Latin modifers, e.g. **Betula* (\>20 µm)* for *Betula* pollen grains \>20 µm in diameter. In general, the names used in Neotoma are those used by the original investigator. In particular, identifications are not changed, although Dataset notes can be added to the database regarding particular identifications. However, some corrections and synonymizations are made.
+  * These include:
+    * Misspellings are corrected.
+    * Nomenclatural, homotypic, or objective synonyms may be applied. Because these synonyms unambiguously refer to the same taxon, no change in identification is implied. For example, the old family name for the grasses *Gramineae* is changed to *Poaceae*.
+    * Taxonomic, heterotypic, or subjective synonyms may be applied if the change does not effectively assign the specimen to a different taxon. Although two names may have been based on different type specimens, if further research has shown that these are in fact the same taxon, the name is changed to the accepted name. These synonymizations should not cause confusion. However, uncritical synonymization, although taxonomically correct, can result in loss of information, and should be avoided. For example, although a number of recent studies have shown that the Taxodiaceae should be merged with the Cupressaceae, simply synonymizing Taxodiaceae with Cupressaceae may expand the universe of taxa beyond that implied by the original investigator. For example, a palynologist in the southeastern United States may have used *Taxodiaceae* to imply **Taxodium**, which is the only genus of the family that has occurred in the region since the Pliocene, but used the the family name because, palynologically, *Taxodiuim* cannot be differentiated from other Taxodiaceae. However, well preserved *Taxodium* pollen grains can be differentiated from the other Cupressaceous genera in the regin, *Juniperus* and *Chamaecyperus*. Thus, the appropriate synonymization for *Taxodiaceae* in this region would be **Taxodium** or **Taxodium*-type*, which would retain the original taxonomic precision. On the other hand, the old *TCT* shorthand for *Taxodiaceae/Cupressaceae/Taxaceae* now becomes *Cupressaceae/Taxaceae* with no loss of information.
+    * For alternative taxonomic desginations, the order may be changed. For example, **Ostrya/Carpinus** would be substituted for **Carpinus/Ostrya**.
 
-    **Types**
+    The database has a number of conventions for uncertainty in identification. The uncertainty is included in the taxon name. Thus, **Acer* *pensylvanicum** and **Acer* cf. *A. pensylvanicum** are two different taxa.
 
-    :   The conventional taxon code followed by «-type»: **Aln.in-t**
-        (*Alnus incana*-type), **Amb-t** (*Ambrosia*-type)
+    * **cf.**:   Latin *confer*, which means compare. In taxonomy *cf.* generally means that the specimen compares well to or is similar to the type referred, but the identification is uncertain. Uncertainty may arise for a number of reasons. The specimen may not be well preserved. It may be nondescript. There may be other similar taxa that can not be ruled out. The analyst may not have access to a complete reference or comparative collection for the group, so other related taxa cannot be excluded with certainty. For uncertainty at the species level, the convention in Neotoma is, for example, *Odocoileus* cf. *O. hemionus*, not *Odocoileus* cf. *hemionus*. Placement of *cf.* is important, because it indicates the taxonomic level of uncertaintly. For example, *Odocoileus* cf. *O. hemionus* implies that the identification of *Odocoileus* is secure, but that the species identification is not; whereas *cf.* *Odocoileus hemionus* implies that not even the genus identification is certain. A further implication in the latter example is that if the genus identification is correct, then the the specimen must also be that species, perhaps because of biogeographic considerations. Although commonly overlooked, it is also important to indicate the proper level of uncertainly in family-genus identifications. For example, Brassicaceae *cf.* *Brassica* implies that assignment to the Brassicaceae is secure; whereas cf. *Brassica* does not indicate that even the family identification is certain.
+        In FAUNMAP, the uncertainty is recorded in a separate field from the taxon name, and for species it is not discernable whether the uncertainty is at the genus or species level. When data were imported from FAUNMAP, the *cf.* uncertainty was conservatively assigned to the genus level. Thus, if **Bison bison** was indicated to have *cf.* uncertainty, this record was imported as cf. *Bison bison** rather than *Bison* cf. *B. bison*. However, in many cases, the uncertainty in the original data was probably at the species level.
+    * **aff.**:   *aff.*, Latin *affinis*, which means having affinity with, but distinct from, the referred taxon. This desgination is often applied to a taxon thought to be undescribed. Thus, aff. *Canis dirus* implies an affinity to *Canus dirus*, but the specimen is likely from another species.
+    * **?**: *?* is used to designate a questionable identification. It may indicate even less certainty than *cf.*. An example is *?Procyon lotor*.
+    * **Types**: Many pollen taxa are designated as types, e.g. *Ambrosia*-type. A type denotes a morphological type that is consistent with the referred taxon, but also includes other taxa that are palynologically indistinguishable. For example, *Ambrosia*-type includes *Ambrosia* and *Iva axillaris*. The referred name commonly indicates the sporophyte taxon thought to be the most probable source of the pollen. An analyst may choose a *-type* designation referring to a lower taxonomic rank rather than an inclusive higher taxonomic rank because the referred taxon is thought to be the source taxon with very high probability. For example, in eastern North America, *Pinus strobus* is the only species of *Pinus* subg. *Strobus*, although several other species of this subgenus occur in western North America. Consequently, some analysts refer to **Pinus strobus*-type rather than *Pinus* subg. *Strobus*. Ideally, a *-type* would comprise a well defined universe of taxa, but in practice types are often vaguely defined. For example, in eastern North America, *Populus balsamifera*-type includes a large proportion of *P. balsamifera* and probably smaller proportions of *P. tremuloides*, *P. grandidentata*, and *P. deltoides*; whereas *Populus tremuloides*-type includes larger proportions of these latter three species and a smaller proportion of *P. balsamifera*. However, these proportions are ill-defined.
+    * **Alternative taxonomic designations**:   In some cases, fossil specimens of two taxa are indistinguishable and are more-or-less equally likely. The names can then be separated by a slash, e.g. **Ostrya/Carpinus**, *Mustelidae/Mephitidae*. If one taxon is more likely, the analyst may choose to use a *-type* designation instead, e.g. **Ostrya*-type*. Although the order of alternative names may be changed by the database, a *-type* designation is not substituted for alternatives. However, the use of more two alternatives is discouraged. In cases in which taxonomic revisions have reduced the number of speices within a taxon, the original universe of species may be retained with the slash designation. An example is *Mustelidae*, which in older literature included the skunks, which have now been placed in their own family the Mephitidae; thus *Mustelidae/Mephitidae* retains the original set of possible taxa.
+    * **Undifferentiated taxa**: Lower taxonomic ranks may not be differentiated. The convention among palynologists is to specify these by the suffix «undiff. ». Thus, *Rosaceae undiff.* designates undifferentiated Rosaceae. However, palynologists have inconsistently applied the *undiff.* appellation, and the pollen databases established a convention that taxa must be mutually exclusive within a dataset. Thus, if a higher-rank taxon is present in a dataset, the *undiff.* suffix is applied only if lower-rank taxa are also present. For example, if **Spiraea** occurs in a dataset, *Rosaceae* would be changed to *Rosaceae undiff.*, because *Spiraea* is a genus in the family Rosaceae. On the other hand, if *Rosaceae undiff.* occurs with no other Rosaceae, then *Rosaceae undiff.* is changed to simply *Rosaceae*; it is implicit that the family is not differentiated.
 
-    **cf.**
+    Faunal analysts customarily use the appellation *sp.* to designate undifferentiated taxa. Thus, **Microtus* sp.* indicates undifferentiated *Microtus*. In addition, faunal analysts regularly use the *sp.* designation even when no lower-rank taxa are identified. The *sp.* appellation is most frequently used with genera. The principle of taxonomic mutual exclusivity has not been applied to fauanl datasets, although it should probably be considered.
 
-    :   «cf. » is placed in the proper position: **Odc.cf.he**
-        (*Odocoileus* cf. *O. hemionus*), **cf.Odc.he** (cf. *Odocoileus
-        hemionus*), or **cf.Odc** (cf. *Odocoileus*).
+* **`author`**: Author(s) of the name. Neither the pollen database nor FAUNMAP stored author names, so these do not currently exist in Neotoma for plant and mammal names. These databases follow standard taxonomic references (e.g. *Flora of North America*, *Flora Europaea*, Wilson and Reeder\'s *Mammal Species of the World*), which, of course, do cite the original authors. However, for beetles, the standard practice is to cite original author names; therefore, this field was added to Neotoma.
+* **`highertaxonid`**: The`taxonid` of the next higher taxonomic rank, for example, the `highertaxonid` for **Bison** is the `taxonid` for *Bovidae*. For *cf.\'s* and *-types*, the next higher rank may be much higher owing to the uncertainty of the identification; the `highertaxonid` for cf. *Bison bison* is the `taxonid` for *Mammalia*. The `highertaxonid` implements the taxonomic hierarchy in Neotoma.
+* **`extinct`**: Boolean (True/False) variable. The value is `True` if the taxon is extinct, `False` if extant.
+* **`taxagroupid (foreign key)`**: The TaxaGroupID facilitates rapid extraction of taxa groups that are typically grouped together for analysis. Some of these groups contain taxa in different classes or phyla. For example, vascular plants include the Spermatophyta and Pteridophyta; the herps include Reptilia and Amphibia; the testate amoebae include taxa from different phyla. Field links to the `TaxaGroupTypes`{.interpreted-text role="ref"} table.
+* **`publicationid (foreign key)`**:   Publication identification number. Field links to the `Publications`{.interpreted-text role="ref"} table.
+* **`notes`**:  Free form notes or comments about the Taxon.
 
-    **aff.**
-
-    :   «aff. » is abbreviated to «af. »: **af.Can.di** (aff. *Canis
-        dirus*)
-
-    **?**
-
-    :   «?» is placed in the proper position. **?Pro.lo** (?\*Procyon
-        lotor\*)
-
-    **Alternative names**
-
-    :   A slash is placed between the conventional abbreviations for the
-        alternative taxa: **Ost/Cpn** (*Ostrya/Carpinus*), or
-        **Mstdae/Mepdae** (Mustelidae/Mephitidae)
-
-    **Undifferentiated taxa**
-
-    :   (BN) «.ud» is added to the code. (ZN) «.sp » is added to the
-        code: **Aln.ud** (*Alnus* undiff.), **Roseae.ud** (Rosaceae
-        undiff.), **Mms.sp** (*Mammuthus* sp.), or **Taydae.sp**
-        (*Tayassuidae* sp.).
-
-    **Parenthetic modifiers**
-
-    :   The conventional taxon code with an appropriate abbreviation for
-        the modifier separated by periods. Multiple modifiers also
-        separated by periods. Abbreviations for pollen morphological
-        modifiers follow Iversen and Troels-Smith (1950): **Raneae.C3**
-        (Ranunculaceae (tricolpate)), **Raneae.Cperi** (Ranunculaceae
-        (pericolpate)), **Pineae.ves.ud** (Pinaceae (vesiculate)
-        undiff.), **Myteae.Csyn.psi** (Myrtaceae (syncolpate, psilate)),
-        **Bet.\>20µ** (*Betula* (\>20 µm))
-
-    **Non-biological taxa**
-
-    :   Use appropriate abbreviations: **bulk.dens** (Bulk density),
-        **LOI** Loss-on-ignition, **Bet.pol.diam** (*Betula* mean
-        pollen-grain diameter).
-
-**TaxonName**
-
-:   Name of the taxon. Most TaxonNames are biological taxa; however,
-    some are biometric measures and some are physical parameters. In
-    addition, some biological taxa may have parenthetic non-Latin
-    modifers, e.g. «*Betula* (\>20 µm)» for *Betula* pollen grains \>20
-    µm in diameter. In general, the names used in Neotoma are those used
-    by the original investigator. In particular, identifications are not
-    changed, although Dataset notes can be added to the database
-    regarding particular identifications. However, some corrections and
-    synonymizations are made.
-
-    These include:
-
-    -   Misspellings are corrected.
-    -   Nomenclatural, homotypic, or objective synonyms may be applied.
-        Because these synonyms unambiguously refer to the same taxon, no
-        change in identification is implied. For example, the old family
-        name for the grasses «Gramineae» is changed to «Poaceae».
-    -   Taxonomic, heterotypic, or subjective synonyms may be applied if
-        the change does not effectively assign the specimen to a
-        different taxon. Although two names may have been based on
-        different type specimens, if further research has shown that
-        these are in fact the same taxon, the name is changed to the
-        accepted name. These synonymizations should not cause confusion.
-        However, uncritical synonymization, although taxonomically
-        correct, can result in loss of information, and should be
-        avoided. For example, although a number of recent studies have
-        shown that the Taxodiaceae should be merged with the
-        Cupressaceae, simply synonymizing Taxodiaceae with Cupressaceae
-        may expand the universe of taxa beyond that implied by the
-        original investigator. For example, a palynologist in the
-        southeastern United States may have used «Taxodiaceae» to imply
-        «*Taxodium*», which is the only genus of the family that has
-        occurred in the region since the Pliocene, but used the the
-        family name because, palynologically, *Taxodiuim* cannot be
-        differentiated from other Taxodiaceae. However, well preserved
-        *Taxodium* pollen grains can be differentiated from the other
-        Cupressaceous genera in the regin, *Juniperus* and
-        *Chamaecyperus*. Thus, the appropriate synonymization for
-        «Taxodiaceae» in this region would be «*Taxodium*» or
-        «*Taxodium*-type», which would retain the original taxonomic
-        precision. On the other hand, the old «TCT» shorthand for
-        «Taxodiaceae/Cupressaceae/Taxaceae» now becomes
-        «Cupressaceae/Taxaceae» with no loss of information.
-    -   For alternative taxonomic desginations, the order may be
-        changed. For example, «*Ostrya/Carpinus*» would be substituted
-        for «*Carpinus/Ostrya*».
-
-    The database has a number of conventions for uncertainty in
-    identification. The uncertainty is included in the taxon name. Thus,
-    «*Acer* *pensylvanicum*» and «*Acer* cf. *A. pensylvanicum*» are two
-    different taxa.
-
-    **cf.**
-
-    :   Latin *confer*, which means compare. In taxonomy «cf. »
-        generally means that the specimen compares well to or is similar
-        to the type referred, but the identification is uncertain.
-        Uncertainty may arise for a number of reasons. The specimen may
-        not be well preserved. It may be nondescript. There may be other
-        similar taxa that can not be ruled out. The analyst may not have
-        access to a complete reference or comparative collection for the
-        group, so other related taxa cannot be excluded with certainty.
-
-    For uncertainty at the species level, the convention in Neotoma is, for example, «*Odocoileus* cf. *O. hemionus*», not
-
-    :   «*Odocoileus* cf. *hemionus*». Placement of «cf. » is important,
-        because it indicates the taxonomic level of uncertaintly. For
-        example, «*Odocoileus* cf. *O. hemionus*» implies that the
-        identification of *Odocoileus* is secure, but that the species
-        identification is not; whereas «cf. *Odocoileus hemionus*»
-        implies that not even the genus identification is certain. A
-        further implication in the latter example is that if the genus
-        identification is correct, then the the specimen must also be
-        that species, perhaps because of biogeographic considerations.
-        Although commonly overlooked, it is also important to indicate
-        the proper level of uncertainly in family-genus identifications.
-        For example, «Brassicaceae cf. *Brassica*» implies that
-        assignment to the Brassicaceae is secure; whereas simply «cf.
-        *Brassica*» does not indicate that even the family
-        identification is certain.
-
-        In FAUNMAP, the uncertainty is recorded in a separate field from
-        the taxon name, and for species it is not discernable whether
-        the uncertainty is at the genus or species level. When data were
-        imported from FAUNMAP, the «cf. » uncertainty was conservatively
-        assigned to the genus level. Thus, if «*Bison bison*» was
-        indicated to have «cf. » uncertainty, this record was imported
-        as «cf. *Bison bison*» rather than «*Bison* cf. *B. bison*».
-        However, in many cases, the uncertainty in the original data was
-        probably at the species level.
-
-    **aff.**
-
-    :   «aff. » Latin *affinis*, which means having affinity with, but
-        distinct from, the referred taxon. This desgination is often
-        applied to a taxon thought to be undescribed. Thus, «aff. *Canis
-        dirus*» implies an affinity to *Canus dirus*, but the specimen
-        is likely from another species.
-
-    **?**
-
-    :   «?» is used to designate a questionable identification. It may
-        indicate even less certainty than «cf. ». An example is
-        «?Procyon lotor».
-
-    **Types**
-
-    :   Many pollen taxa are designated as types, e.g.
-        «*Ambrosia*-type». A type denotes a morphological type that is
-        consistent with the referred taxon, but also includes other taxa
-        that are palynologically indistinguishable. For example,
-        «*Ambrosia*-type» includes *Ambrosia* and *Iva* *axillaris*. The
-        referred name commonly indicates the sporophyte taxon thought to
-        be the most probable source of the pollen. An analyst may choose
-        a «-type» designation referring to a lower taxonomic rank rather
-        than an inclusive higher taxonomic rank because the referred
-        taxon is thought to be the source taxon with very high
-        probability. For example, in eastern , *Pinus strobus* is the
-        only species of *Pinus* subg. *Strobus*, although several other
-        species of this subgenus occur in western . Consequently, some
-        analysts refer to «*Pinus strobus*-type» rather than «*Pinus*
-        subg. *Strobus*». Ideally, a type would comprise a well defined
-        universe of taxa, but in practice types are often vaguely
-        defined. For example, in eastern «*Populus balsamifera*-type»
-        includes a large proportion of *P. balsamifera* and probably
-        smaller proportions of *P. tremuloides, P. grandidentata,* and
-        *P. deltoides*; whereas «*Populus tremuloides*-type» includes
-        larger proportions of these latter three species and a smaller
-        proportion of *P. balsamifera*. However, these proportions are
-        ill-defined.
-
-    **Alternative taxonomic designations**
-
-    :   In some cases, fossil specimens of two taxa are
-        indistinguishable and are more-or-less equally likely. The names
-        can then be separated by a slash, e.g. «*Ostrya/Carpinus*»,
-        «Mustelidae/Mephitidae». If one taxon is more likely, the
-        analyst may choose to use a «-type» designation instead, e.g.
-        «*Ostrya*-type». Although the order of alternative names may be
-        changed by the database, a «-type» designation is not
-        substituted for alternatives. However, the use of more two
-        alternatives is discouraged. In cases in which taxonomic
-        revisions have reduced the number of speices within a taxon, the
-        original universe of species may be retained with the slash
-        designation. An example is «Mustelidae», which in older
-        literature included the skunks, which have now been placed in
-        their own family the Mephitidae; thus «Mustelidae/Mephitidae»
-        retains the original set of possible taxa.
-
-    **Undifferentiated taxa**
-
-    :   Lower taxonomic ranks may not be differentiated. The convention
-        among palynologists is to specify these by the suffix «undiff.
-        ». Thus, «Rosaceae undiff.» designates undifferentiated
-        Rosaceae. However, palynologists have inconsistently applied the
-        «undiff.» appellation, and the pollen databases established a
-        convention that taxa must be mutually exclusive within a
-        dataset. Thus, if a higher-rank taxon is present in a dataset,
-        the «undiff.» suffix is applied only if lower-rank taxa are also
-        present. For example, if «*Spiraea*» occurs in a dataset,
-        «Rosaceae» would be changed to «Rosaceae undiff.», because
-        *Spiraea* is a genus in the family Rosaceae. On the other hand,
-        if «Rosaceae undiff.» occurs with no other Rosaceae, then
-        «Rosaceae undiff.» is changed to simply «Rosaceae»; it is
-        implicit that the family is not differentiated.
-
-    Faunal analysts customarily use the appellation «sp.» to designate
-    undifferentiated taxa. Thus, «*Microtus* sp.» indicates
-    undifferentiated *Microtus*. In addition, faunal analysts regularly
-    use the «sp.» designation even when no lower-rank taxa are
-    identified. The «sp.» appellation is most frequently used with
-    genera. The principle of taxonomic mutual exclusivity has not been
-    applied to fauanl datasets, although it should probably be
-    considered.
-
-**Author**
-
-:   Author(s) of the name. Neither the pollen database nor FAUNMAP
-    stored author names, so these do not currently exist in Neotoma for
-    plant and mammal names. These databases follow standard taxonomic
-    references (e.g. *Flora of North America*, *Flora Europaea*, Wilson
-    and Reeder\'s *Mammal Species of the World*), which, of course, do
-    cite the original authors. However, for beetles, the standard
-    practice is to cite original author names; therefore, this field was
-    added to Neotoma.
-
-**HigherTaxonID**
-
-:   The TaxonID of the next higher taxonomic rank, for example, the
-    HigherTaxonID for «*Bison*» is the TaxonID for «Bovidae». For
-    «cf.\'s» and «-types», the next higher rank may be much higher owing
-    to the uncertainty of the identification; the HigherTaxonID for «cf.
-    *Bison bison*» is the TaxonId for «Mammalia». The HigherTaxonID
-    implements the taxonomic hierarchy in Neotoma.
-
-**Extinct**
-
-:   Boolean (True/False) variable. The value is True if the taxon is
-    extinct, False if extant.
-
-**TaxaGroupID (Foreign Key)**
-
-:   The TaxaGroupID facilitates rapid extraction of taxa groups that are
-    typically grouped together for analysis. Some of these groups
-    contain taxa in different classes or phyla. For example, vascular
-    plants include the Spermatophyta and Pteridophyta; the herps include
-    Reptilia and Amphibia; the testate amoebae include taxa from
-    different phyla. Field links to the
-    `TaxaGroupTypes`{.interpreted-text role="ref"} table.
-
-**PublicationID (Foreign Key)**
-
-:   Publication identification number. Field links to the
-    `Publications`{.interpreted-text role="ref"} table.
-
-**Notes**
-
-:   Free form notes or comments about the Taxon.
-
-## taxagrouptypes {#TaxaGroupTypes}
+## `taxagrouptypes` {#TaxaGroupTypes}
 
 Lookup table for Taxa Group Types. This table is referenced by the [`taxa`](#Taxa) table.
 
@@ -431,20 +190,15 @@ Lookup table for Taxa Group Types. This table is referenced by the [`taxa`](#Tax
 showTable(db, 'taxagrouptypes')
 ```
 
-**TaxaGroupID (Primary Key)**
-
-:   A three-letter Taxa Group code.
-
-**TaxaGroup**
-
-:   The taxa group. Below are some examples:
+* **`taxagroupid (primary key)`**: A three-letter Taxa Group code.
+* **`taxagroup`**: The taxa group. Below are some examples:
 
 ```{sql, taxonGroups, connection=db}
 SELECT * FROM ndb.taxagrouptypes
 LIMIT 5;
 ```
 
-## Variables {#Variables}
+## `variables` {#Variables}
 
 This table lists **variables**, which always consist of a *taxon* (linked by a **taxonid**) and units of measurement. Variables can also have [variable elements](#VariableElements), [variable contexts](#VariableContexts), and [variable modifications](#VariableModifications). Thus, the same taxon with different measurement units (e.g. present/absent, NISP, MNI) are different Variables.
 
@@ -452,34 +206,12 @@ This table lists **variables**, which always consist of a *taxon* (linked by a *
 showTable(db, 'variables')
 ```
 
-**VariableID (Primary Key)**
-
-:   An arbitrary Variable identification number.
-
-**TaxonID (Foreign Key)**
-
-:   Taxon identification number. Field links to the
-    `Taxa`{.interpreted-text role="ref"} table.
-
-**VariableElementID (Foreign Key)**
-
-:   Variable Element identification number. Field links to the
-    `VariableElements`{.interpreted-text role="ref"} lookup table.
-
-**VariableUnitsID (Foreign Key)**
-
-:   Variable Units identification number. Field links to the
-    `VariableUnits`{.interpreted-text role="ref"} lookup table.
-
-**VariableContextID (Foreign Key)**
-
-:   Variable Context identification number. Field links to the
-    `VariableContexts`{.interpreted-text role="ref"} lookup table.
-
-**VarialbeModificationID (Foreign Key)**
-
-:   Variable Modification identification number. Field links to the
-    `VariableModifications`{.interpreted-text role="ref"} lookup table.
+* **`variableid (primary key)`**: An arbitrary Variable identification number.
+* **`taxonid (foreign key)`**:   Taxon identification number. Field links to the [`Taxa`](#Taxa) table.
+* **`variableelementid (foreign key)`**:   Variable Element identification number. Field links to the [`VariableElements`](#VariableElements) lookup table.
+* **`variableunitsid (foreign key)`**:   Variable Units identification number. Field links to the [`VariableUnits`](#VariableUnits) lookup table.
+* **`variablecontextid (foreign key)`**:   Variable Context identification number. Field links to the [`VariableContexts`](#VariableContexts) lookup table.
+* **`variablemodificationid (foreign key)`**:   Variable Modification identification number. Field links to the [`VariableModifications`](#VariableModifications) lookup table.
 
 ### SQL Example
 
@@ -504,7 +236,7 @@ GROUP BY tx.taxonname,
 ### SQL Example
 
 This query lists all sites with *Zea mays* pollen by designating the
-VariableElement as «pollen».
+VariableElement as *pollen*.
 
 ``` {sql, zeaPollenSites, connection=db}
 SELECT DISTINCT tx.taxonname, 
@@ -524,7 +256,7 @@ WHERE tx.taxonname = 'Zea mays'
 LIMIT 10;
 ```
 
-We can obtain a similar result if we search instead for all records from pollen datasets, as below.  However, it may be the case that pollen is observed and recorded in datasets that are not, strictly speaking, pollen datasets.
+We can obtain a similar result if we search instead for all records from pollen datasets, as below. However, it may be the case that pollen is observed and recorded in datasets that are not, strictly speaking, pollen datasets.
 
 ``` {sql, ZeapollenByDataset, connection=db}
 SELECT DISTINCT tx.taxonname, 
@@ -546,46 +278,25 @@ LIMIT 10;
 
 ### SQL Example
 
-This example gives a list of all sites with *Bison bison antiquus* bones
-with human butchering.
+This example gives a list of all sites with samples that have been ascribed some form of taphonomic change.
 
-``` {.sourceCode .sql}
-SELECT Taxa.TaxonName, VariableModifications.VariableModification,
-Sites.SiteName
-
-FROM Sites INNER JOIN (CollectionUnits INNER JOIN (Datasets INNER JOIN
-(Samples INNER JOIN ((VariableModifications INNER JOIN (Taxa INNER JOIN
-Variables ON Taxa.TaxonID = Variables.TaxonID) ON
-VariableModifications.VariableModificationID =
-Variables.VariableModificationID) INNER JOIN Data ON
-Variables.VariableID = Data.VariableID) ON Samples.SampleID =
-Data.SampleID) ON Datasets.DatasetID = Samples.DatasetID) ON
-CollectionUnits.CollectionUnitID = Datasets.CollectionUnitID) ON
-Sites.SiteID = CollectionUnits.SiteID
-
-GROUP BY Taxa.TaxonName, VariableModifications.VariableModification,
-Sites.SiteName
-
-HAVING (((Taxa.TaxonName)="Bison bison antiquus") AND
-((VariableModifications.VariableModification)="human butchering"));
+```{sql, bisonButchering, connection=db}
+SELECT DISTINCT tx.taxonname, 
+  tt.taphonomictype,
+  st.sitename
+FROM ndb.taphonomictypes AS tt
+INNER JOIN ndb.specimentaphonomy AS spet ON spet.taphonomictypeid = tt.taphonomictypeid
+INNER JOIN ndb.specimens AS spe ON spe.specimenid = spet.specimenid
+INNER JOIN ndb.data AS dt ON dt.dataid = spe.dataid
+INNER JOIN ndb.variables AS var ON var.variableid = dt.variableid
+INNER JOIN ndb.taxa AS tx ON var.taxonid = tx.taxonid
+INNER JOIN ndb.samples AS smp ON smp.sampleid = dt.sampleid
+INNER JOIN ndb.datasets AS ds ON ds.datasetid = smp.datasetid
+INNER JOIN ndb.collectionunits AS cu ON cu.collectionunitid = ds.collectionunitid
+INNER JOIN ndb.sites AS st ON st.siteid = cu.siteid;
 ```
 
-Result:
-
-  --------------------- -------------------------- ------------------------
-  **TaxonName**         **VariableModification**   **SiteName**
-
-  Bison bison antiquus  human butchering           Folsom
-
-  Bison bison antiquus  human butchering           \[41LU1\]
-
-  Bison bison antiquus  human butchering           Murray Springs
-                                                   \[EE:8:25\]
-
-  Bison bison antiquus  human butchering           San Jon
-  --------------------- -------------------------- ------------------------
-
-## VariableContexts {#VariableContexts}
+## `variablecontexts` {#VariableContexts}
 
 Variable Contexts lookup table. Table is referenced by the [variables](#Variables) table.
 
@@ -593,17 +304,15 @@ Variable Contexts lookup table. Table is referenced by the [variables](#Variable
 showTable(db, 'variablecontexts')
 ```
 
-* **VariableContextID (Primary Key)**
-  * An arbitrary Variable Context identification number.
-* **VariableContext**
-  * Depositional context. Examples are:
-    * **anachronic**: A specimen older than the primary deposit, e.g. a Paleozoic spore in a Holocene deposit. The specimen may be redeposited from the  catchment, or may be derived from long distance, e.g. Tertiary pollen grains in Quaternary sediments with no local Tertiary source. A Pleistocene specimen in a Holocene archaeological deposit, possibly resulting from aboriginal fossil collecting, would also be anachronic.
-    * **intrusive**: A specimen, generally younger than the primary deposit, *e.g*. a domestic pig in an otherwise Pleistocene deposit.
-    * **redeposited**: A specimen older than the primary deposit and assumed to have been redeposited from a local source by natural causes.
-    * **articulated**: An articulated skeleton
-    * **clump**: A clump, esp. of pollen grains
+* **`variablecontextid (primary key)`**: An arbitrary Variable Context identification number.
+* **`variablecontext`**: Depositional context. Examples are:
+  * **anachronic**: A specimen older than the primary deposit, e.g. a Paleozoic spore in a Holocene deposit. The specimen may be redeposited from the catchment, or may be derived from long distance, e.g. Tertiary pollen grains in Quaternary sediments with no local Tertiary source. A Pleistocene specimen in a Holocene archaeological deposit, possibly resulting from aboriginal fossil collecting, would also be anachronic.
+  * **intrusive**: A specimen, generally younger than the primary deposit, *e.g*. a domestic pig in an otherwise Pleistocene deposit.
+  * **redeposited**: A specimen older than the primary deposit and assumed to have been redeposited from a local source by natural causes.
+  * **articulated**: An articulated skeleton
+  * **clump**: A clump, esp. of pollen grains
 
-## VariableElements {#VariableElements}
+## `variableelements` {#VariableElements}
 
 Lookup table of Variable Elements. Table is referenced by the
 [variables](#Variables) table.
@@ -612,73 +321,33 @@ Lookup table of Variable Elements. Table is referenced by the
 showTable(db, 'variableelements')
 ```
 
-**VariableElementID (Primary Key)** An arbitrary Variable Element
+* **`variableelementid (primary key)`** An arbitrary Variable Element
 identification number.
+* **`variableelement`**:   The element, part, or organ of the taxon identified. For plants, these include pollen, spores, and various macrofossil organs, such as *seed*, *twig*, *cone*, and *cone bract*. Thus, *Betula* pollen and *Betula* seeds are two different Variables. For mammals, `variableelements` include the bone or tooth identified, e.g. *tibia*. *tibia, distal, left*, *M2, lower, left*. Some more unusual elements are *Neotoma* fecal pellets and *Erethizon dorsata* quills. If no element is indicated for mammalian fauna, then the genric element *bone/tooth* is assigned. Elements were not assigned in FAUNMAP, so all Variables ingested from FAUNMAP were assigned the *bone/tooth* element. Physical Variables may also have elements. For example, the Loss-on-ignition Variables have *Loss-on-ignition* as a Taxon, and temperature of analysis as an element, e.g. *500°C*, *900°C*. Charcoal Variables have the size fragments as elements, e.g. *75-100 µm*, *100-125 µm*.
 
-**VariableElement**
+## `variablemodifications` {#VariableModifications}
 
-:   The element, part, or organ of the taxon identified. For plants,
-    these include pollen, spores, and various macrofossil organs, such
-    as «seed», «twig», «cone», and «cone bract». Thus, *Betula* pollen
-    and *Betula* seeds are two different Variables. For mammals,
-    Elements include the bone or tooth identified, e.g. «tibia». «tibia,
-    distal, left», «M2, lower, left». Some more unusual elements are
-    *Neotoma* fecal pellets and *Erethizon dorsata* quills. If no
-    element is indicated for mammalian fauna, then the genric element
-    «bone/tooth» is assigned. Elements were not assigned in FAUNMAP, so
-    all Variables ingested from FAUNMAP were assigned the «bone/tooth»
-    element. Physical Variables may also have elements. For example, the
-    Loss-on-ignition Variables have «Loss-on-ignition» as a Taxon, and
-    temperature of analysis as an element, e.g. «500°C», «900°C».
-    Charcoal Variables have the size fragments as elements, e.g. «75-100
-    µm», «100-125 µm».
-
-## VariableModifications {#VariableModifications}
-
-Lookup table of Variable Modifications. Table is referenced by the
-[variables](#Variables) table.
+Lookup table of Variable Modifications. Table is referenced by the [variables](#Variables) table.
 
 ```{r, variablemodificationstable, echo=FALSE}
 showTable(db, 'variablemodifications')
 ```
 
-**VariableModificationID (Primary Key)**
+* **`variablemodificationid (primary key)`**: An arbitrary Variable Modification identification number.
+* **`variablemodification`**:   Modification to a specimen. Examples of modifications to bones include *carnivore gnawed*, *rodent gnawed*, *burned*, *human butchering*. Modifications to pollen grains include various preservation states, e.g. *1/2 grains*, *degraded*, *corroded*, *broken*. Most Variables do not have a modification assigned.
 
-:   An arbitrary Variable Modification identification number.
+## `variableunits` {#VariableUnits}
 
-**VariableModification**
-
-:   Modification to a specimen. Examples of modifications to bones
-    include «carnivore gnawed», «rodent gnawed», «burned», «human
-    butchering». Modifications to pollen grains include various
-    preservation states, e.g. «1/2 grains», «degraded», «corroded»,
-    «broken». Most Variables do not have a modification assigned.
-
-## VariableUnits {#VariableUnits}
-
-Lookup table of Variable Units. Table is referenced by the
-[variables](#Variables) table.
+Lookup table of Variable Units. Table is referenced by the [variables](#Variables) table.
 
 ```{r, variableunitstable, echo=FALSE}
 showTable(db, 'variableunits')
 ```
 
-**VariableUnitsID (Primary Key)**
+* **`variableunitsid (primary key)`**:   An arbitrary Variable Units identification number.
+* **`variableunit`**:   The units of measurement. For fauna, these are *present/absent*, *NISP* (Number of Individual Specimens), and *MNI* (Minimum Number of Individals). For pollen, these are *NISP* (pollen counts) and *percent*. Units for plant macrofossils include *present/abesnt* and *NISP*, as well as a number of quantitative concentration measurements and semi-quantitative abundance measurements such as *1-5 scale*. Examples of charcoal measurement units are *fragments/ml* and *µm\^2/ml*.
 
-:   An arbitrary Variable Units identification number.
-
-**VariableUnit**
-
-:   The units of measurement. For fauna, these are «present/absent»,
-    «NISP» (Number of Individual Specimens), and «MNI» (Minimum Number
-    of Individals). For pollen, these are «NISP» (pollen counts) and
-    «percent». Units for plant macrofossils include «present/abesnt» and
-    «NISP», as well as a number of quantitative concentration
-    measurements and semi-quantitative abundance measurements such as
-    «1-5 scale». Examples of charcoal measurement units are
-    «fragments/ml» and «µm\^2/ml».
-
-## RepositoryInstitutions {#RepositoryInstitutions}
+## `repositoryinstitutions` {#RepositoryInstitutions}
 
 A lookup table of institutions that are repositories for fossil specimens. Table is referenced by the [`repositoryspecimens`](#RepositorySpecimens) table.
 
@@ -686,93 +355,42 @@ A lookup table of institutions that are repositories for fossil specimens. Table
 showTable(db, 'repositoryinstitutions')
 ```
 
-**RepositoryID (PrimaryKey)**
+* **`repositoryid (primarykey)`**:   An arbitrary Repository identification number. Repositories include museums, university departments, and various governmental agencies.
+* **`acronym`**:   A unique acronym for the repository. Many repositories have well-established acronyms (e.g. AMNH = of Natural History); however, there is no official list. Various acronyms have been used for some institutions, and in some cases the same acronym has been used for different institutions. Consequently, the database acronym may differ from the acronym used in some publications. For example, *CMNH* has been used for the Carnegie Museum of Natural History, the Cleveland Museum of Natural History, and the Cincinnati Museum of Natural History. In Neotoma, two of these institutions were assigned different acronyms, ones that have been used for them in other publications: CM -- Carnegie Museum of Natural History, CLM -- Cleveland Museum of Natural History.
+* **`repository`**: The full name of the physical sample repository.
+* **`notes`**: Free form notes or comments about the physical sample repository, especially notes about name changes, closures, and specimen transfers. In some cases, it is known that the specimens were transferred, but their current disposition may be uncertain.
 
-:   An arbitrary Repository identification number. Repositories include
-    museums, university departments, and various governmental agencies.
+## `repositoryspecimens` {#RepositorySpecimens}
 
-**Acronym**
-
-:   A unique acronym for the repository. Many repositories have
-    well-established acronyms (e.g. AMNH = of Natural History); however,
-    there is no official list. Various acronyms have been used for some
-    institutions, and in some cases the same acronym has been used for
-    different institutions. Consequently, the database acronym may
-    differ from the acronym used in some publications. For example,
-    «CMNH» has been used for the Carnegie Museum of Natural History, the
-    Cleveland Museum of Natural History, and the Cincinnati Museum of
-    Natural History. In Neotoma, two of these institutions were assigned
-    different acronyms, ones that have been used for them in other
-    publications: CM -- Carnegie Museum of Natural History, CLM --
-    Cleveland Museum of Natural History.
-
-**Repository**
-
-:   The full name of the repository.
-
-**Notes**
-
-:   Free form notes or comments about the repository, especially notes
-    about name changes, closures, and specimen transfers. In some cases,
-    it is known that the specimens were transferred, but their current
-    disposition may be uncertain.
-
-## RepositorySpecimens {#RepositorySpecimens}
-
-This table lists the repositories in which fossil specimens have been
-accessioned or reposited. The inventory in Neotoma is by Dataset, which
-is the collection of specimens from a Collection Unit. Occasionally,
-specimens from a single Collection Unit have been reposited at different
-institutions, in which case multiple records for that Dataset occur in
-the table.
+This table lists the repositories in which fossil specimens have been accessioned or reposited. The specimens in Neotoma are linked to the [`dataset`](#Dataset), the collection of specimens of a single [`datasettype`](#DatasetType) within a [`collectionunit`](#collectionunit). When specimens from a single `dataset` have been reposited at several institutions, there will be multiple records for that `dataset` in the `repositoryspecimens` table.
 
 ```{r, repositoryspecimentstable, echo=FALSE}
 showTable(db, 'repositoryspecimens')
 ```
 
-**DatasetID (Primary Key, Foreign Key)**
-
-:   Dataset identification number. Field links to the
-    `Datasets`{.interpreted-text role="ref"} table.
-
-**RepositoryID (Primary Key, Foreign Key)**
-
-:   Repository identification number. Field links to the
-    `RepositoryInstitutions`{.interpreted-text role="ref"} lookup table.
-
-**Notes**
-
-:   Free form notes or comments about the disposition of the specimens.
+* **`datasetid (primary key, foreign key)`**:   Dataset identification number. Field links to the [`datasets`](#Datasets) table.
+* **`repositoryid (primary key, foreign key)`**:   Repository identification number. Field links to the [`repositoryinstitutions`](#RepositoryInstitutions) lookup table.
+* **`notes`**:   Free form notes or comments about the disposition of the specimens.
 
 ### SQL Example
 
-This query lists the repositories for specimens from the Kimmswick site.
+This query lists the physical sample repositories for all specimens from the Kimmswick site, and gives us the number of speciments at each repository institution.
 
-``` {.sourceCode .sql}
-SELECT Sites.SiteName, CollectionUnits.CollUnitName,
-RepositoryInstitutions.Repository
-
-FROM RepositoryInstitutions INNER JOIN (((Sites INNER JOIN
-CollectionUnits ON Sites.SiteID = CollectionUnits.SiteID) INNER JOIN
-Datasets ON CollectionUnits.CollectionUnitID =
-Datasets.CollectionUnitID) INNER JOIN RepositorySpecimens ON
-Datasets.DatasetID = RepositorySpecimens.DatasetID) ON
-RepositoryInstitutions.RepositoryID = RepositorySpecimens.RepositoryID
-
-WHERE (((Sites.SiteName)="Kimmswick"));
+```{sql, repoSpecimenQuery, connection=db}
+SELECT st.sitename, 
+  cu.collunitname,
+  COUNT(*) AS specimens,
+  ri.repository
+FROM ndb.sites AS st
+INNER JOIN ndb.collectionunits AS cu ON cu.siteid = st.siteid
+INNER JOIN ndb.datasets AS ds ON ds.collectionunitid = cu.collectionunitid
+INNER JOIN ndb.repositoryspecimens AS rs ON rs.datasetid = ds.datasetid
+INNER JOIN ndb.repositoryinstitutions AS ri ON ri.repositoryid = rs.repositoryid
+WHERE st.sitename='Kimmswick'
+GROUP BY st.sitename, cu.collunitname, ri.repository;
 ```
 
-Result:
-
-  ---------------- -------------------- --------------------
-  **SiteName**     **CollUnitName**     **Repository**
-
-  Kimmswick        Locality             
-
-  Kimmswick        Locality             
-  ---------------- -------------------- --------------------
-
-## specimendates {#SpecimenDates}
+## `specimendates` {#SpecimenDates}
 
 This table enables queries for dated specimens of indivual taxa. Although the `materialdated` field in the [`geochronology`](#Geochronology) table may list the taxa dated, this protocol is not enforced, and the field is not linked to the [`taxa`](#Taxa) table.
 
@@ -780,10 +398,9 @@ This table enables queries for dated specimens of indivual taxa. Although the `m
 showTable(db, 'specimendates')
 ```
 
-* **`specimendateid` (Primary Key)**: An arbitrary specicimen date ID.
-* **`geochronid` (Foreign Key)**: Geochronologic identification number. Field links to the [`geochronology`](#Geochronology) table.
-* **TaxonID (Foreign Key)**: Accepted name in Neotoma. Field links to [`taxa`](#Taxa) table.
-* **VariableElementID (Foreign Key)**: Variable Element identification number. Field links to the
-    [`variableelements`](#VariableElements) lookup table.
-* **SampleID (Primary Key, Foreign Key)**: Sample ID number. Field links to the [`samples`](#Samples) table.
-* **Notes**:   Free form notes or comments about dated specimen.
+* **`specimendateid` (primary key)`**: An arbitrary specicimen date ID.
+* **`geochronid (foreign key)`**: Geochronologic identification number. Field links to the [`geochronology`](#Geochronology) table.
+* **`taxonid (foreign key)`**: Accepted name in Neotoma. Field links to [`taxa`](#Taxa) table.
+* **`variableelementid (foreign key)`**: Variable Element identification number. Field links to the [`variableelements`](#VariableElements) lookup table.
+* **`sampleid (primary key, foreign key)`**: Sample ID number. Field links to the [`samples`](#Samples) table.
+* **`notes`**: Free form notes or comments about dated specimen.

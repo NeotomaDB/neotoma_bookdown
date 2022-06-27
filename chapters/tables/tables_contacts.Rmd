@@ -1,0 +1,68 @@
+# Contact and Individual Related Tables
+
+## `collectors` {#Collectors}
+
+The `collectors` table lists the people who were responsible for collecting a particular collection unit. 
+
+```{r, collectorstable, echo=FALSE}
+showTable(db, 'collectors')
+```
+
+* **`collectorid (primary key)`**: An arbitrary Collector identification number.
+* **`collectionunitid (foreign key)`**]: The `collectionunitid` for the record that was collected. Field links to the [`collectionunits`](#CollectionUnits) table.
+* **`contactid (foreign key)`**: Person who collected the CollectionUnit. Multiple individuals are listed in separate records. Field links to the [`contacts`](#Contacts) table.
+* **`collectororder`**: Order in which the collectors should be listed.
+
+## `contacts` {#Contacts}
+
+This table lists persons and organizations. The table is referenced
+through Foreign Keys in the following tables:
+* [`Chronologies`](#Chronologies),
+* [`Collectors`](#Collectors),
+* [`DatasetPIs`](#DatasetPIs),
+* [`DatasetSubmissions`](#DatasetSubmissions),
+* [`Projects`](#Projects),
+* [`PublicationAuthors`](#PublicationAuthors),
+* [`SampleAnalysts`](#SampleAnalysts), and
+* [`SiteImages`](#SiteImages) tables.
+
+```{r, contactstable, echo=FALSE}
+showTable(db, 'contacts')
+```
+
+* **`contactid (primary key)`**: An arbitrary `contactid` number.
+* **`aliasid (foreign key)`**: The `contactid` of a person's current name. If the `aliasid` is different from the `contactid`, the `contactid` refers to the person's former name. For example, if J. L. Bouvier became J. B. Kennedy, the `contactid` for J. B. Kennedy is the `aliasid` for J. L. Bouvier.
+* **`contactname`**: Full name of the person, last name first (e.g. *Simpson, George Gaylord*) or name of organization or project (e.g. *Great Plains Flora Association*).
+* **`contactstatusid (foreign key)`**: Current status of the person, organization, or project. Field links to the [`contactstatuses`](#ContactStatuses) lookup table.
+* **`familyname`**: Family or surname name of a person.
+* **`leadinginitials**: leading initials for given or forenames **without`** spaces (e.g. *G.G.*).
+* **`givennames`**: Given or forenames of a person (e.g. *George Gaylord*). Initials with spaces are used if full given names are not known (e.g. *G. G*).
+* **`suffix`**: Suffix of a person's name (e.g. «Jr.», «III»).
+* **`title`**: A person's title (e.g. «Dr.», «Prof.», «»).
+* **`phone`**: Telephone number.
+* **`fax`**: Fax number.
+* **`email`**: Email address.
+* **`url`**: Universal Resource Locator, an Internet World Wide Web address.
+* **`address`**: Full mailing address.
+* **`notes`**: Free form notes or comments about the person, organization, or project.
+
+## `contactstatuses` {#ContactStatuses}
+
+Lookup table of Contact Statuses. Table is referenced by the
+[`contacts`](#Contacts) table.
+
+```{r, contactstatusestable, echo=FALSE}
+showTable(db, 'contactstatuses')
+```
+
+* **`contactstatusid (primary key)`**: An arbitrary Contact Status identification number.
+* **`contactstatus`**: Status of person, organization, or project.
+* **`statusdescription`**:
+  * Description of the status. The following statuses exist (with descriptions):
+    * **active**: Person, project, or organization is active in the field
+    * **deceased**: Person is deceased
+    * **defunct**: Project or organization is defunct or non-operational
+    * **extant**: Project or organization is extant
+    * **inactive**: Person is inactive in the field
+    * **retired**: Person is retired
+    * **unknown**: Status is unknown

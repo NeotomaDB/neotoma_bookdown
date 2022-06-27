@@ -1,5 +1,9 @@
 # Database Design Concepts
 
+The Neotoma database itself is a highly normalized object that contains over 150 distinct tables, allowing us to uniquely and precisely describe individual occurrences of paleoecological elements in space and time, and ascribe to those observations information about the mode of preparation, collection and publication.
+
+![The Entity-Relationship Diagram for the Neotoma Database.](../assets/images/ERDFullNeotoma.svg)
+
 ## Sites, Collection Units, Analysis Units, Samples, and Datasets
 
 Fossil data are site based. A [`site`](#Sites) has a name, latitude-longitude coordinates, altitude, and areal extent. In Neotoma, Sites are designated geographically as boxes with north and south latitude coordinates and east and west longitude coordinates. If the areal extent is not known, the box collapses to a point, with the north and south latitudes equal and the east and west longitudes equal. Most of the legacy sites in Neotoma currently have point coordinates. The lat-long box can circumscribe the site, for example a lake, or it may circumscribe a larger area in which the site lies either because the exact location of the site is not known or because the exact location is purposely kept vague. In the case of many legacy sites, the exact location is not know precisely; for example, it may have been described as «on a gravel bar 5 miles east of town». The exact locations of some sites have purposely been kept vague to prevent looting and vandalism.

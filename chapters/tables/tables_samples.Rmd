@@ -1,0 +1,234 @@
+# Sample Related Tables
+
+## `analysisunits` {#AnalysisUnits}
+
+This table stores the data for Analysis Units.
+
+```{r, analysisunitstable, echo=FALSE}
+showTable(db, 'analysisunits')
+```
+
+* **``analysisunitid (primary key)``**: An arbitrary Analysis Unit identification number.
+* **``collectionunitid (foreign key)``**: Collection Unit ID number. Field links to [`CollectionUnits`](#CollectionUnits) table. Every     Analysis Unit belongs to a Collection Unit.
+* **``analysisunitname``**: Optional name for an Analysis Unit. Analysis Units are usually designated with either a depth or a name, sometimes both.
+* **``depth``**: Optional depth of the Analysis Unit in cm. Depths are typically designated for Analysis Units from cores and for Analysis Units excavated in arbitrary (e.g. 10 cm) levels. Depths are normally the midpoints of arbitrary levels. For example, for a level excavated from 10 to 20 cm or for a core section from 10 to 15 cm, the depth is 15. Designating depths as midpoints and thicknesses facilitates calculation of ages from age models that utilize single midpoint depths for Analysis Units rather than top and bottom depths. Of course, top and bottom depths can be calculated from midpoint depths and thicknesses. For many microfossil core samples, only the midpoint depths are known or published; the diameter or width of the sampling device is often not given.
+* **``thickness``**: Optional thickness of the Analysis Unit in cm. For many microfossil core samples, the depths are treated as points, and the thicknesses are not given in the publications, although 0.5 to 1.0 cm would be typical.
+* **``faciesid``**: Sedimentary facies of the Analysis Unit. Field links to the [`FaciesTypes`](#FaciesTypes) table.
+* **``mixed``**: Indicates whether specimens in the Analysis Unit are of mixed ages, for example Pleistocene fossils occurring with late Holocene fossils. Although Analysis Units may be mixed, samples from the Analysis Unit may not be, for example individually radiocarbon dated specimens.
+* **``igsn``**: International Geo Sample Number. The IGSN is a unique identifier for a Geoscience sample. They are assigned by the SESAR, the System for Earth Sample Registration ([www.geosamples.org](http://www.geosamples.org)), which is a registry that provides and administers the unique identifiers. IGSN's may be assigned to all types of geoscience samples, including cores, rocks, minerals, and even fluids. Their purpose is to facilitate sharing and correlation of samples and sample-based data. For data in Neotoma, their primary value would be for correlation various samples from the same Analysis Units, for example pollen, charcoal, diatoms, and geochemical analyses. Conceivably, the AnalysisUnitID could be used for this purpose; however, IGSN's could be assigned by projects before their data are submitted to the database. Moreover, AnalysisUnitID's are intended to be internal to the database. Although IGSN's could be assigned to Neotoma Collection Units and Samples, their primary value lies in their assignment to Analysis Units. IGSN's are not yet assigned to Neotoma Analysis Units; however, that may change after consultation with SESAR.
+* **``notes``**: Free form notes or comments about the Analysis Unit.
+
+## `data` {#Data}
+
+The primary data table in the database. Each occurrence of a Variable in a sample comprises a record in the Data table.
+
+```{r, datatable, echo=FALSE}
+showTable(db, 'data')
+```
+
+* **``sampleid (primary key, foreign key)``**: Sample identification number. Field links to [`Samples`](#Samples) table.
+* **``variableid (primary key, foreign key)``**: Variable identification number. Field links to [`Variables`](#Variables) table.
+* **``value``**: The value of the variable.
+
+### SQL Example
+
+The following SQL example gives a list of vertebrate taxa by Analysis Unit for all sites. Also listed are Variable Measurement Units and Values.
+
+```{sql, vertTaxaAU, connection=db}
+SELECT
+  au.analysisunitname,
+  tx.taxonname,
+  vu.variableunits,
+  data.value
+FROM ndb.datasettypes AS dst
+  INNER JOIN ndb.datasets AS ds ON ds.datasettypeid = dst.datasettypeid
+  INNER JOIN ndb.samples AS smp ON smp.datasetid = ds.datasetid
+  INNER JOIN ndb.data AS data ON smp.sampleid = data.sampleid
+  INNER JOIN ndb.variables AS var ON var.variableid = data.variableid
+  INNER JOIN ndb.analysisunits AS au ON au.analysisunitid = smp.analysisunitid
+  INNER JOIN ndb.taxa AS tx ON tx.taxonid = var.taxonid
+  INNER JOIN ndb.variableunits AS vu ON vu.variableunitsid = var.variableunitsid
+WHERE dst.datasettype = 'vertebrate fauna'
+LIMIT 5;
+```
+
+## `depagents` {#DepAgents}
+
+Deposition Agents for Analysis Units. Individual Analysis Units may be listed multiple times with different Deposition Agents.
+
+```{r, depagentstable, echo=FALSE}
+showTable(db, 'depagents')
+```
+
+* **``analysisunitid (primary key)``**: Analysis Unit identification number. Field links to [`AnalysisUnits`](#AnalysisUnits) table.
+* **``depagentid``**: Deposition Agent identification number. Field links to [`DepAgentTypes`](#DepAgentTypes) table.
+
+## `depagenttypes` {#DepAgentTypes}
+
+Lookup table of Depositional Agents. Table is referenced by the [`DepAgents`](#DepAgents) table.
+
+```{r, depagenttypestable, echo=FALSE}
+showTable(db, 'depagenttypes')
+```
+
+* **``depagentid (primary key)``**: An arbitrary Depositional Agent identification number.
+* **``depagent``**: Depostional Agent.
+
+## `sampleages` {#SampleAges}
+
+This table stores sample ages. Ages are assigned to a Chronology. Because there may be more than one Chronology for a Collection Unit, samples may be assigned different ages for different Chronologies. A simple example is one sample age in radiocarbon years and another in calibrated radiocarbon years. The age units are an attribute of the Chronology.
+
+```{r, sampleagestable, echo=FALSE}
+showTable(db, 'sampleages')
+```
+
+* **``sampleageid (primary key)``**: An arbitrary Sample Age identification number.
+* **``sampleid (foreign key)``**: Sample identification number. Field links to the [`Samples`](#Samples) table.
+* **``chronologyid (foreign key)``**: Chronology identification number. Field links to the [`Chronologies`](#Chronologies) table.
+* **``age``**: Age of the sample
+* **``ageyounger``**: Younger error estimate of the age. The definition of this estimate is an attribute of the Chronology. Many ages do not have explicit error estimates assigned.
+* **``ageolder``**: Older error estimate of the age.
+
+### SQL Example
+
+This query lists the Sample Ages for the default Chronologies for Muskox Lake. The CollectionUnit.Handle indicates that there is only one Collection Unit from this site. There are two default Chronologies, one in «Radiocarbon years BP» and the other in «Calibrated radiocarbon years BP».
+
+```{sql, sampAgesChron, connection=db}
+SELECT
+   st.sitename,
+   cu.handle,
+   array_agg(sa.age),
+   at.agetype
+FROM ndb.sites AS st
+INNER JOIN ndb.collectionunits AS cu ON cu.siteid = st.siteid
+INNER JOIN ndb.chronologies AS ch ON ch.collectionunitid = cu.collectionunitid
+INNER JOIN ndb.sampleages AS sa ON sa.chronologyid = ch.chronologyid
+INNER JOIN ndb.agetypes AS at ON at.agetypeid = ch.agetypeid
+WHERE st.sitename = 'Muskox Lake'
+  AND ch.isdefault = TRUE
+GROUP BY st.sitename, cu.handle, at.agetype;
+```
+
+## `sampleanalysts` {#SampleAnalysts}
+
+This table lists the Sample Analysts.
+
+```{r, sampleanalyststable, echo=FALSE}
+showTable(db, 'sampleanalysts')
+```
+
+* **``analystid (primary key)``**: An arbitrary Sample Analyst identification number.
+* **``sampleid (foreign key)``**: Sample identification number. Field links to the [`Samples`](#Samples) table.
+* **``contactid (foreign key)``**: Contact identification number. Field links to the [`Contacts`](#Contacts) table.
+* **``analystorder``**: Order in which Sample Analysts are listed if more than one (rare).
+
+## `samplekeywords` {#SampleKeywords}
+
+This table links keywords to samples. For example, it identifies modern pollen surface samples.
+
+```{r, samplekeywordstable, echo=FALSE}
+showTable(db, 'samplekeywords')
+```
+
+* **``sampleid (primary key, foreign key)``**: Sample identification number. Field links to the [`Samples`](#Samples) table.
+* **``keywordid (primary key, foreign key)``**: Keyword identification number. Field links to the [`Keywords`](#Keywords) lookup table.
+
+### SQL Example
+
+This query provides a list of modern pollen surface samples from the United States. We listed the site name, collection type, the contact person, and the depositional environment from which the sample was obtained. We link sites and geopoliticalunits using the [`sitegeopolitical`](#sitegeopolitical) table, then we link to the samples to find samples with the *modern* keyword.
+
+```{sql, geopolmodern, connection=db}
+SELECT smp.sampleid,
+  st.sitename,
+  cut.colltype,
+  ct.contactname,
+  dpv.depenvt,
+  kw.keyword
+FROM ndb.geopoliticalunits AS gpu
+  INNER JOIN ndb.sitegeopolitical AS sgp ON sgp.geopoliticalid = gpu.geopoliticalid
+  INNER JOIN ndb.sites AS st ON st.siteid = sgp.siteid
+  INNER JOIN ndb.collectionunits AS cu ON cu.siteid = st.siteid
+  INNER JOIN ndb.collectiontypes AS cut ON cut.colltypeid = cu.colltypeid
+  INNER JOIN ndb.depenvttypes AS dpv ON dpv.depenvtid = cu.depenvtid
+  INNER JOIN ndb.datasets AS ds ON ds.collectionunitid = cu.collectionunitid
+  INNER JOIN ndb.datasettypes AS dst ON dst.datasettypeid = ds.datasettypeid
+  INNER JOIN ndb.samples AS smp ON smp.datasetid = ds.datasetid
+  INNER JOIN ndb.samplekeywords AS skw ON skw.sampleid = smp.sampleid
+  INNER JOIN ndb.keywords AS kw ON kw.keywordid = skw.keywordid
+  INNER JOIN ndb.datasetpis AS dspi ON dspi.datasetid = ds.datasetid
+  INNER JOIN ndb.contacts AS ct ON ct.contactid = dspi.contactid
+WHERE  dst.datasettype = 'pollen' 
+  AND kw.keyword = 'modern'
+  AND gpu.geopoliticalname = 'United States'
+ORDER BY cu.colltypeid
+LIMIT 10;
+```
+
+## `samples` {#Samples}
+
+This table stores sample data. Samples are the link between [`analysisunit`s](#analysisunits-analysisunits) (which belong to the [`collectionunit`](#collectionunits)) and a [`dataset`](#datasets) of a particular [`datasettype`](#datasettypes). Thus, there can be multiple samples from the same analysis unit, one for each datasettype within the collection unit.  For example one sample in an analysis unit at a collection unit might belong to a pollen dataset, the other to a plant macrofossil dataset.
+
+```{r, samplestable, echo=FALSE}
+showTable(db, 'samples')
+```
+
+* **``sampleid (primary key)``**: An arbitrary Sample identification number.
+* **``analysisunitid (foreign key)``**: Analysis Unit identification number. Field links to the [`AnalysisUnits`](#AnalysisUnits) table.
+* **``datasetid (foreign key)``**: Dataset identification number. Field links to the [`Datasets`](#Datasets) table.
+* **``samplename``**: Sample name if any.
+* **``analysisdate``**: Date of analysis.
+* **``labnumber``**: Laboratory number for the sample. A special case regards geochronologic samples, for which the LabNumber is the number, if any, assigned by the submitter, not the number assigned by the radiocarbon laboratory, which is in the [`Geochronology`](#Geochronology) table.
+* **``preparationmethod``**: Description, notes, or comments on preparation methods. For faunal samples, notes on screening methods or screen size are stored here.
+* **``notes``**: Free form note or comments about the sample.
+
+### SQL Example
+
+This query provides a list of samples from the site *Canaleja*. The collection unit name, analysis unit name, dataset type, and preparation methods are listed.
+
+```{sql, prepmethods, connection=db}
+SELECT DISTINCT cu.collunitname,
+  au.analysisunitname,
+  dst.datasettype,
+  smp.preparationmethod
+FROM ndb.sites AS st
+INNER JOIN ndb.collectionunits AS cu ON cu.siteid = st.siteid
+INNER JOIN ndb.analysisunits AS au ON au.collectionunitid = cu.collectionunitid
+INNER JOIN ndb.datasets AS ds ON ds.collectionunitid = cu.collectionunitid
+INNER JOIN ndb.datasettypes AS dst ON dst.datasettypeid = ds.datasettypeid
+INNER JOIN ndb.samples AS smp ON smp.analysisunitid = au.analysisunitid
+WHERE st.sitename = 'Canaleja' AND dst.datasettype = 'pollen'
+ORDER BY cu.collunitname, au.analysisunitname
+```
+
+## `aggregatesamples` {#AggregateSamples}
+
+This table stores the samples in Aggregate Datasets.
+
+```{r, aggregatesamplestable, echo=FALSE}
+showTable(db, 'aggregatesamples')
+```
+
+* **``aggregatedatasetid (primary key, foreign key)``**: An arbitrary Aggregate Dataset identification number. Field links to the [`AggregateDatasets`](#AggregateDatasets) table.
+* **``sampleid (primary key, foreign key)``**: Sample ID number. Field links to the [`Samples`](#Samples) table.
+
+## `faciestypes` {#FaciesTypes}
+
+Lookup table of Facies Types. Table is referenced by the [`AnalysisUnits`](#AnalysisUnits) table.
+
+```{r, faciestypestable, echo=FALSE}
+showTable(db, 'faciestypes')
+```
+
+* **`faciesid (primary key)`**: An arbitrary Facies identification number.
+* **`facies`**: Short Facies description.
+
+## `keywords` {#Keywords}
+
+Lookup table of keywords referenced by the [`samplekeywords`](#SampleKeywords) table. The table provides a means to identify samples sharing a common attribute. For example, the keyword "*modern sample*" identifies modern surface samples in the database. These samples include individual surface samples, as well as core tops. Although not implemented, a "pre-European settlement" keyword would be a means to identify samples just predating European settlement.
+
+```{r, keywordstable, echo=FALSE}
+showTable(db, 'keywords')
+```
+
+* **`keywordid (primary key)`**: An arbitrary Keyword identification number.
+* **`keyword`**: A keyword for identifying samples sharing a common attribute.

@@ -1,8 +1,15 @@
 # SQL Quickly
 
-SQL (Sturctured Query Language) is a standard language for querying and modifying relational databases. There is an official standard for SQL, statements such as `SELECT` and `WHERE` are common across most SQL implementations, however, individual vendors do maintain proprietary formatting.  Neotoma is implemented using PostgreSQL, which has [extensive documentation online](https://www.postgresql.org/docs/14/index.html). It is beyond the scope of this document to teach SQL, however, we have included a large number of SQL queries along with the documentation to provide templates for queries, and to help the user understand how to directly work with the database. These queries can by typed or copied and pasted into database tools such as [pgAdmin](https://www.pgadmin.org/).
+SQL (Sturctured Query Language) is a standard language for querying and modifying relational databases. There is an official standard for SQL, which means that statements such as `SELECT` and `WHERE` are common across most SQL implementations. While many properties are common, individual vendors do maintain proprietary formatting. Neotoma is implemented using PostgreSQL, which has [extensive documentation online](https://www.postgresql.org/docs/14/index.html). It is beyond the scope of this document to teach SQL, however, we have included a large number of SQL queries along with the documentation to provide templates for queries, and to help the user understand how to directly work with the database. These queries can by typed or copied and pasted into database tools such as [pgAdmin](https://www.pgadmin.org/).
 
-Throughout the document we will refer to tables using the format `ndb.tablename`.  Here `ndb` is the schema for most of the data tables within the Neotoma database. There are other schema, including `apps`, `doi` and `public`, but the data tables themselves are kept in the `ndb` schema.  You can see all available data tables in the `ndb` schema using the [Neotoma database schema website](https://open.neotomadb.org/dbschema).
+For the purposes of database development, the Neotoma team uses the following SQL tools:
+
+* [pgAdmin](https://www.pgadmin.org/)
+* [VS Code](https://code.visualstudio.com/)
+* [psql](https://www.postgresql.org/docs/current/app-psql.html)
+* [SchemaSpy](https://schemaspy.org/)
+
+Throughout the Neotoma Database Manual we will refer to tables using the format `schema.tablename`.  The `ndb` namespace is the schema for most of the data tables within the Neotoma database, so you will see things like `ndb.taxa` and `ndb.sites` frequently. There are other schema, including `apps`, `doi` and `public`, but the data tables themselves are kept in the `ndb` schema. You can see all available data tables in the `ndb` schema using the [Neotoma database schema website](https://open.neotomadb.org/dbschema).
 
 ## SQL Example
 
@@ -10,11 +17,13 @@ The following SQL example lists the number of sites by the geopolitical unit, wh
 
 By convention, SQL first defines the output, using the `SELECT` statement.  The `FROM` block is used to explain how the information is brought together, and the `WHERE` (and subsequent blocks) are meant to help filter and aggregate data as generated within the `FROM` block.
 
-Throughput this document we will use `AS` statemements to help us write our SQL queries neatly.  Using `AS` helps us create an alias so that we don't have to write so much in our query.  As much as possible we will use the same aliases for tables throughout this guide.  For example, `FROM ndb.sites AS st` is commonly used, where `st` becomes the alias for the `ndb.sites` table, and stands in for it elsewhere in the query. Often you will see `gpu` used for `ndb.geopoliticalunits`, or `tx` for `ndb.taxa`.  In Postgres SQL it is not neccessary to use the term `AS` (we use it here to make the queries clearer for folks just learning how to use SQL), so it's possible to see things like `ndb.sites st` in place of `ndb.sites AS st`.  Below is an example where both forms are used:
+Throughput this document we will use `AS` statemements to help us write our SQL queries neatly, and we will use `INNER JOIN` calls with `ON` statements, rather than `NATURAL INNER JOIN` calls. Using `AS` helps us create an alias so that we don't have to write so much in our query.  As much as possible we will use the same aliases for tables throughout this guide. For example, `FROM ndb.sites AS st` is commonly used, where `st` becomes the alias for the `ndb.sites` table, and stands in for it elsewhere in the query. Often you will see `gpu` used for `ndb.geopoliticalunits`, or `tx` for `ndb.taxa`.  In Postgres SQL it is not neccessary to use the term `AS` (we use it here to make the queries clearer for folks just learning how to use SQL), so it's possible to see things like `ndb.sites st` in place of `ndb.sites AS st`. 
 
-### Query {.tabset}
+The `NATURAL INNER JOIN` assumes that any columns with common names are used in a `JOIN`. Because Neotoma enforces naming consistency (in general) between [primary and foreign keys](#table-keys-table-keys), we ought to be able to perform `NATURAL` joins. However, a trigger on most Neotoma tables adds the columns `recdatecreated` and `recdatemodified` to almost all tables. For this reason we make it practice within SQL queries to be explicit about the joining columns.
 
-#### SQL Query
+The following example show the use of queries with and without `AS`:
+
+### SQL Query
 
 ```{sql, sampleCall, echo=TRUE, connection=db, output.var="geopoliticalsort"}
 SELECT
@@ -33,13 +42,11 @@ HAVING COUNT(*) > 0
 ORDER BY sites DESC;
 ```
 
-#### Output {.active}
-
 ```{r}
 DT::datatable(geopoliticalsort)
 ```
 
-## Table Keys
+## Table Keys {#table-keys}
 
 Within tables there are often Keys. A Key may be a **Primary Key** (PK), which acts as a unique identifier for individual records within a table, or they may be a **Foreign Key** (FK) which refers to a unique identifier in another table. Primary Keys and Foreign Keys are critical to join tables in a SQL query. 
 

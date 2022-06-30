@@ -1,203 +1,8 @@
 # Site Related Tables
 
-## SiteImages {#SiteImages}
+These tables are broadly associated with defining the geospatial position of sampling sites and the properties of these sites.  Sites are the central organizing object within Neotoma, and are used to represent the spatial context of any single dataset, or the spatial extent of aggregate datasets. As described in the [Database Design Concept](#sitedesign), a site contains one or more collection units, each with one or more datasets.  Thus, properties such as [`lakeparameters`](#lakeparameters), or [`geopoliticalunits`](#geopoliticalunits) are associated with the `site`, and not directly with the `dataset`.
 
-This table stores hyperlinks to jpeg images of sites.
-
-```{r, siteimagetable, echo=FALSE}
-showTable(db, 'siteimages')
-```
-
-* **SiteImageID (Primary Key)**: An arbitrary Site Image identification number.
-* **SiteID (Foreign Key)**: Site identification number. Field links to the [`Sites`](#Sites) table.
-* **ContactID (Foreign Key)**: Contact identification number for image attribution from the [`Contacts`](#Contacts) table.
-* **Caption**: Caption for the image.
-* **Credit**: Credit for the image. If null, the credit is formed from the    ContactID.
-* **Date**: Date of photograph or image.
-* **SiteImage**: Hyperlink to a URL for the image.
-
-## Sites {#Sites}
-
-The `sites` table stores information about the geographic information specific to a sampling location, including the name, geographic bounding box, spatial polygon, and site description. Sites generally have an areal extent and can be circumscribed by a latitude-longitude box (using the `latitudenorth` and other numeric bounding variables), but the geospatial object is also stored as a PostGIS `geog` object using a WGS84 projection. Site data ingested from legacy databases may have included only point locations, and additionally, may have been recorded using DMS notation, meaning the decimal expression may appear overly accurate.
-
-The lat-long box can be used either to circumscribe the areal extent of a site or to provide purposeful imprecision to the site location. Site location may be imprecise because of the original description was vague, e.g. «a gravel bar 5 miles east of town», or because the investigators, land owner, or land management agency may not want the exact location made public, perhaps to prevent looting and vandalism. In the first case, the lat-long box can be made sufficiently large to encompass the true location and in the second case to prevent exact location.
-
-```{r, siteimagetable, echo=FALSE}
-showTable(db, 'sites')
-```
-
-* **SiteID (Primary Key)**: An arbitrary Site identification number.
-* **SiteName**: Name of the site.
-  * Alternative names, including archaeological site numbers, are placed in square brackets, for example: "New \#4 \[Lloyd\'s Rock Hole\]" and "Modoc Rock Shelter \[11RA501\]".
-  * A search of the SiteName field for any of the alternative names or for the archaeological site number will find the site. Some archaeological sites are known only by their site number. Modifiers to site names are placed in parentheses. Authors are added for generic sites names, especially for surface samples, that are duplicated in the database, for example: "Site 1 (Heusser 1978)", "Site 1 (Delcourt et al. 1983)", "Site 1 (Elliot-Fisk et al. 1982)", "Site 1 (Whitehead and Jackson 1990)"
-  * Historically, when sitenames were duplicated in the database the name was followed by the 2-letter country code and state or province, for example: "Big Lake (US:Maine)", and "Big Lake (US:Arkansas)". This past practice has declined as the number of database stewards has increased and the capacity to provide improved geospatial searching has improved.
-* **LongitudeEast**: East bounding longitude for a site. Currently generated from an internal trigger through PostGIS to extract the bounding box based on the object spatial polygon.
-* **LatitudeNorth**: North bounding latitude for a site.
-* **LongitudeWest**: West bounding longitude for a site.
-* **LatitudeSouth**: South bounding latitude for a site.
-* **Altitude**: Altitude of a site in meters.
-* **Area**: Area of a site in hectares.
-* **SiteDescription**: Free form description of a site, including such information as    physiography and vegetation around the site.
-* **Notes**: Free form notes or comments about the site.
-
-## SiteGeoPolitical {#SiteGeoPolitical}
-
-This table lists the GeoPolitical units in which sites occur.
-
-```{r, siteimagetable, echo=FALSE}
-showTable(db, 'sitegeopolitical')
-```
-
-* **SiteGeoPoliticalID (Primary Key)**: An arbitrary Site GeoPolitical identification number.
-* **SiteID (Foreign Key)**: Site identification number. Field links to the [`Sites`](#Sites) table.
-* **GeoPoliticalID (Foreign Key)**: GeoPolitical identification number. Field links to the [`GeoPoliticalUnits`](#GeoPoliticalUnits) lookup table.
-
-SQL Example
------------
-
-The query in Example 2.8.1 lists the GeoPoliticalUnits for «», one unit to a record. This query lists them in a single record.
-
-``` {.sourceCode .sql}
-SELECT Sites.SiteName, GeoPoliticalUnits.GeoPoliticalName,
-GeoPoliticalUnits\_1.GeoPoliticalName,
-GeoPoliticalUnits\_2.GeoPoliticalName
-
-FROM GeoPoliticalUnits AS GeoPoliticalUnits\_2 INNER JOIN
-(SiteGeoPolitical AS SiteGeoPolitical\_2 INNER JOIN ((SiteGeoPolitical
-AS SiteGeoPolitical\_1 INNER JOIN (GeoPoliticalUnits INNER JOIN (Sites
-INNER JOIN SiteGeoPolitical ON Sites.SiteID = SiteGeoPolitical.SiteID)
-ON GeoPoliticalUnits.GeoPoliticalID = SiteGeoPolitical.GeoPoliticalID)
-ON SiteGeoPolitical\_1.SiteID = Sites.SiteID) INNER JOIN
-GeoPoliticalUnits AS GeoPoliticalUnits\_1 ON
-SiteGeoPolitical\_1.GeoPoliticalID =
-GeoPoliticalUnits\_1.GeoPoliticalID) ON SiteGeoPolitical\_2.SiteID =
-Sites.SiteID) ON GeoPoliticalUnits\_2.GeoPoliticalID =
-SiteGeoPolitical\_2.GeoPoliticalID
-
-WHERE (((Sites.SiteName)="") AND ((GeoPoliticalUnits.Rank)=1) AND
-((GeoPoliticalUnits\_1.Rank)=2) AND ((GeoPoliticalUnits\_2.Rank)=3));
-```
-
-Result:
-
-  -------------- ---------------------------------------- ------------------------------------------- -------------------------------------------
-  **SiteName**   **GeoPoliticalUnits.GeoPoliticalName**   **GeoPoliticalUnits\_1.GeoPoliticalName**   **GeoPoliticalUnits\_2.GeoPoliticalName**
-
-                                                                                                      Hennepin
-  -------------- ---------------------------------------- ------------------------------------------- -------------------------------------------
-
-SQL Example
------------
-
-The problem with the query above is that if a site has less than three GeoPolitical Names, the result will return empty. For example, «» has no GeoPoliticalUnit with Rank = 3, and will return an empty result with the above query. A solution to this problem is to create and save separate queries for the three ranks:
-
-Query GeoPol1:
-
-``` {.sourceCode .sql}
-SELECT Sites.SiteName, GeoPoliticalUnits.GeoPoliticalName
-
-FROM Sites INNER JOIN (GeoPoliticalUnits INNER JOIN SiteGeoPolitical ON
-GeoPoliticalUnits.GeoPoliticalID = SiteGeoPolitical.GeoPoliticalID) ON
-Sites.SiteID = SiteGeoPolitical.SiteID
-
-WHERE (((GeoPoliticalUnits.Rank)=1));
-```
-
-Query GeoPol2:
-
-``` {.sourceCode .sql}
-SELECT Sites.SiteName, GeoPoliticalUnits.GeoPoliticalName
-
-FROM Sites INNER JOIN (GeoPoliticalUnits INNER JOIN SiteGeoPolitical ON
-GeoPoliticalUnits.GeoPoliticalID = SiteGeoPolitical.GeoPoliticalID) ON
-Sites.SiteID = SiteGeoPolitical.SiteID
-
-WHERE (((GeoPoliticalUnits.Rank)=2));
-```
-
-Query GeoPol3:
-
-``` {.sourceCode .sql}
-SELECT Sites.SiteName, GeoPoliticalUnits.GeoPoliticalName
-
-FROM Sites INNER JOIN (GeoPoliticalUnits INNER JOIN SiteGeoPolitical ON
-GeoPoliticalUnits.GeoPoliticalID = SiteGeoPolitical.GeoPoliticalID) ON
-Sites.SiteID = SiteGeoPolitical.SiteID
-
-WHERE (((GeoPoliticalUnits.Rank)=3));
-```
-
-These three queries can now be combined in a new query with left joins, and the GeoPolitical Names will be returned even if there are less than three.
-
-``` {.sourceCode .sql}
-SELECT GeoPol1.SiteName, GeoPol1.GeoPoliticalName,
-GeoPol2.GeoPoliticalName, GeoPol3.GeoPoliticalName
-
-FROM (GeoPol1 LEFT JOIN GeoPol2 ON GeoPol1.SiteName = GeoPol2.SiteName)
-LEFT JOIN GeoPol3 ON GeoPol2.SiteName = GeoPol3.SiteName
-
-WHERE (((GeoPol1.SiteName)="Lofty "));
-```
-
-Result:
-
-  -------------- ------------------------------ ------------------------------ ------------------------------
-  **SiteName**   **GeoPol1.GeoPoliticalName**   **GeoPol2.GeoPoliticalName**   **GeoPol3.GeoPoliticalName**
-
-  Lofty                                                                         
-  -------------- ------------------------------ ------------------------------ ------------------------------
-
-SQL Example
------------
-
-The saved queries from the example above can be linked with tables in a more complicated query. This query lists all the pollen sites in the adjacent states of «» in the «» and «» in «».
-
-``` {.sourceCode .sql}
-SELECT GeoPol1.SiteName, GeoPol1.GeoPoliticalName,
-GeoPol2.GeoPoliticalName, GeoPol3.GeoPoliticalName,
-DatasetTypes.DatasetType
-
-FROM (DatasetTypes INNER JOIN ((Sites INNER JOIN CollectionUnits ON
-Sites.SiteID = CollectionUnits.SiteID) INNER JOIN Datasets ON
-CollectionUnits.CollectionUnitID = Datasets.CollectionUnitID) ON
-DatasetTypes.DatasetTypeID = Datasets.DatasetTypeID) INNER JOIN
-((GeoPol1 LEFT JOIN GeoPol2 ON GeoPol1.SiteName = GeoPol2.SiteName) LEFT
-JOIN GeoPol3 ON GeoPol2.SiteName = GeoPol3.SiteName) ON Sites.SiteName =
-GeoPol1.SiteName
-
-GROUP BY GeoPol1.SiteName, GeoPol1.GeoPoliticalName,
-GeoPol2.GeoPoliticalName, GeoPol3.GeoPoliticalName,
-DatasetTypes.DatasetType
-
-HAVING (((GeoPol1.GeoPoliticalName)="" Or (GeoPol1.GeoPoliticalName)="")
-AND ((GeoPol2.GeoPoliticalName)="" Or (GeoPol2.GeoPoliticalName)="") AND
-((DatasetTypes.DatasetType)="pollen"))
-
-ORDER BY GeoPol1.GeoPoliticalName, GeoPol2.GeoPoliticalName,
-GeoPol3.GeoPoliticalName, DatasetTypes.DatasetType;
-```
-
-Result:
-
-  -------------- ------------------------------ ------------------------------ ------------------------------ -----------------
-  **SiteName**   **GeoPol1.GeoPoliticalName**   **GeoPol2.GeoPoliticalName**   **GeoPol3.GeoPoliticalName**   **DatasetType**
-
-  Sierra Bacha                                                                                                pollen
-
-  Sierra Bacha 3                                                                                              pollen
-
-                                                                               Apache                         pollen
-
-                                                                               Coconino                       pollen
-
-                                                                               Coconino                       pollen
-
-                                                                               Coconino                       pollen
-
-  Montezuma Well                                                               Yavapai                        pollen
-  -------------- ------------------------------ ------------------------------ ------------------------------ -----------------
-
-## GeoPoliticalUnits {#GeoPoliticalUnits}
+## `geopoliticalunits` {#GeoPoliticalUnits}
 
 Lookup table of GeoPoliticalUnits. Table is referenced by the [`SiteGeoPolitical`](#SiteGeoPolitical) table. These are countries and various subdivisions. Countries and subdivisions were acquired from the U.S. Central Intelligence Agency World Factbook[^1] and the ISO 3166-1 and ISO 3166-2 databases[^2].
 
@@ -205,77 +10,268 @@ Each GeoPolitical Unit has a rank. GeoPolitical Units with Rank 1 are generally 
 and metropolitan departments in . In addition to purely political units, various other administrative regions and geographic entities can be
 contained in this table. Examples of administrative regions are National Parks and Forests. It might be quite useful, for example, to have a record of all the sites in . These additional units are Rank 4, and they can be added to the database as warranted.
 
+```{r, geopoliticaltable, echo=FALSE}
+showTable(db, 'geopoliticalunits')
+```
+
+* **`geopoliticalid` (primary key)**: An arbitrary GeoPolitical identification number.
+* **`geopoliticalname`**: Name of the GeoPolitical Unit, e.g. , .
+* **`geopoliticalunit`**: The name of the unit, e.g. country, state, county, island, governorate, oblast.
+* **`rank`**: The rank of the unit.
+* **`highergeopoliticalid`**: The GeoPoliticalUnit with higher rank, e.g. the country in which a state lies.
+
+### SQL Example
+
+This query lists `geopoliticalunits` for Canada, along with their political unit name (*e.g.*, "province"), and the rank of that unit. The query uses a [recursive CTE](https://www.cybertec-postgresql.com/en/recursive-queries-postgresql/), which allows us to move through the table's internal hierarchy. The recursive query first pulls all rows in which the `geopoliticalname` is 'Canada', and then accumulates rows as it queries repeatedly to accumulate rows in which the `highergeopoliticalid` is contained within the set of `geopoliticalid` values in the accumulating table. 
+
+```{sql, geoPolCanadaSQL, connection=db}
+WITH RECURSIVE gpuset AS (
+  SELECT gpu.geopoliticalid,
+         gpu.geopoliticalname,
+         gpu.geopoliticalunit,
+         gpu.rank,
+         gpu.highergeopoliticalid
+  FROM ndb.geopoliticalunits AS gpu
+  WHERE geopoliticalname = 'Canada'
+  UNION ALL
+  SELECT gpu.geopoliticalid, 
+         gpu.geopoliticalname, 
+         gpu.geopoliticalunit,
+         gpu.rank,
+         gpu.highergeopoliticalid 
+  FROM ndb.geopoliticalunits AS gpu
+  INNER JOIN gpuset ON gpu.highergeopoliticalid = gpuset.geopoliticalid
+)
+SELECT geopoliticalid, 
+       geopoliticalname,
+       geopoliticalunit,
+       rank
+FROM gpuset
+ORDER BY rank;
+```
+
+### SQL Example 
+
+The above query does not sort or structure the data into any sort of hierarchy or internally ordered list.  We can use array operators to aggregate the `geopoliticalid`s as we move through the hierarchy, so that we add a column `gpuhier` that is an integer array, containing each of the levels of the hierarchy.  This way we can see that `geopoliticalid` 10018, "Baffin Island" is an island that is contained within Nunavut, which is a territory within Canada.
+
+```{sql, geoPolCanadaArraySQL, connection=db}
+WITH RECURSIVE gpuset AS (
+  SELECT gpu.geopoliticalid,
+         ARRAY[gpu.geopoliticalid] AS gpuhier,
+         gpu.geopoliticalname,
+         gpu.geopoliticalunit,
+         gpu.rank,
+         gpu.highergeopoliticalid
+  FROM ndb.geopoliticalunits AS gpu
+  WHERE geopoliticalname = 'Canada'
+  UNION ALL
+  SELECT gpu.geopoliticalid, 
+         gpuset.gpuhier || gpu.geopoliticalid,
+         gpu.geopoliticalname, 
+         gpu.geopoliticalunit,
+         gpu.rank,
+         gpu.highergeopoliticalid 
+  FROM ndb.geopoliticalunits AS gpu
+  INNER JOIN gpuset ON gpu.highergeopoliticalid = gpuset.geopoliticalid
+)
+SELECT geopoliticalid, 
+       gpuhier,
+       geopoliticalname,
+       geopoliticalunit,
+       rank
+FROM gpuset
+ORDER BY rank;
+```
+
+## `lakeparameters` {#lakeparameters}
+
+Many sites within Neotoma are lacustrine sites (see [`depositionalenvironments`](#depositionalenvironments)). These sites often have associated parameters that can define taphonomic properties for particular dataset types.  For example, the literature strongly links basin area to the propoertion of regional and local pollen within a site.  Thus `lakeparameters` are critical to understanding the depositional environment and context for many datasets. The `lakeparameters` table links specific [`lakeparametertypes`](#lakeparametertypes) to `siteid`, and associated the parameter type with a value.
+
+```{r, lakeparamstable, echo=FALSE}
+showTable(db, 'lakeparameters')
+```
+
+* **`siteid` (foreign key)**: THe `siteid` to which the parameter is applied.
+* **`lakeparameterid` (foreign key)**: The parameter associated with the value.
+* **`value`**: The value for the parameter, in units defined by the `lakeparameterid`.
+
+### SQL Example
+
+We want to get all lake areas for sites with diatom records where the lake size is over 1km^2^. Because some lakes have more than one dataset, we aggregate by `siteid`, and then aggregate the `datasetid`s into an array so that each site is in its own row.
+
+```{sql, diatomlakeareasSQL, connection=db}
+SELECT st.siteid, 
+       st.sitename,
+       lpt.lakeparameter,
+       ROUND(lp.value),
+       ARRAY_AGG(ds.datasetid)
+FROM ndb.sites AS st 
+INNER JOIN ndb.collectionunits    AS  cu ON           cu.siteid = st.siteid
+INNER JOIN ndb.datasets           AS  ds ON ds.collectionunitid = cu.collectionunitid
+INNER JOIN ndb.datasettypes       AS dst ON   dst.datasettypeid = ds.datasettypeid 
+INNER JOIN ndb.lakeparameters     AS  lp ON           lp.siteid = st.siteid 
+INNER JOIN ndb.lakeparametertypes AS lpt ON lpt.lakeparameterid = lp.lakeparameterid
+WHERE dst.datasettype LIKE 'diatom%'
+AND lpt.lakeparametershortname = 'Lake Area'
+AND lp.value > 100
+GROUP BY st.siteid, st.sitename, lpt.lakeparameter, lp.value
+ORDER BY lp.value DESC
+LIMIT 12;
+```
+
+## `lakeparametertypes` {#lakeparametertypes}
+
+The set of distinct lake parameters currently supported by Neotoma as data objects. These include direct measurements of lake basin parameters (area, perimeter, depth) as well as watershed parameters and proportional land use around watersheds. This list can be modified to include new parameters as needed, however these must be added at the database level (rather than through Tilia or the R package).
+
+```{r, lakeparamtypestable, echo=FALSE}
+showTable(db, 'lakeparametertypes')
+```
+
+* **`lakeparameterid` (primary key)**: Primary key for the lake parameter types.
+* **`lakeparametercode`**: A text string representing a contraction of the full lake parameter name.
+* **`lakeparametershortname`**: A shortened form of the lake parameter name.
+* **`lakeparameter`**: The full lake parameter name with units.
+
+### SQL Example
+
+We want to see the coverage of various lake parameters for all records identified as lacustrine within the database.  Because depositional environments are stored as a hierarchical table we need to use a [recursive CTE](https://www.postgresql.org/docs/current/queries-with.html) to resolve the hierarchy.  The CTE `dephierarchy` resolves to a table with a row for each of the types of lacustrine depositional environment, along with an array of the "path" required to travel from the depositional environment `Lacustrine` to the particular environment name (*e.g.*, *Nonspecific Floodplain Lake*). 
+
+We use the CTE `dephierarchy` to generate a total count of all sites that are part of the *Lacustrine* hierarchy and return that as part of the CTE `sitecount`. Finally, we select each of the different lake parameter types, count the number of sites with those records, and divide that value by the total number of lacustrine-type sites in Neotoma.
+
+```{sql, depenvreportingSQL, connection=db}
+WITH RECURSIVE dephierarchy AS (
+  SELECT de.depenvtid,
+         de.depenvt,
+         ARRAY[de.depenvtid] AS deagg
+  FROM ndb.depenvttypes AS de
+  WHERE de.depenvt = 'Lacustrine'
+  UNION ALL 
+  SELECT de.depenvtid,
+         de.depenvt,
+         dephierarchy.deagg || de.depenvtid
+  FROM ndb.depenvttypes AS de 
+  INNER JOIN dephierarchy ON de.depenvthigherid = dephierarchy.depenvtid
+  WHERE NOT de.depenvtid = dephierarchy.depenvtid
+),
+sitecount AS (
+       SELECT COUNT(DISTINCT st.siteid) AS total
+       FROM ndb.sites AS st
+       INNER JOIN ndb.collectionunits AS cu ON    cu.siteid = st.siteid
+       INNER JOIN        dephierarchy AS dh ON dh.depenvtid = cu.depenvtid   
+)
+SELECT lpt.lakeparameter, 
+       ROUND((COUNT(DISTINCT st.siteid)::decimal / (SELECT total FROM sitecount)::decimal) * 100) AS pct
+FROM ndb.sites AS st
+INNER JOIN     ndb.collectionunits AS  cu ON           cu.siteid = st.siteid
+INNER JOIN        ndb.depenvttypes AS dev ON       dev.depenvtid = cu.depenvtid
+INNER JOIN      ndb.lakeparameters AS  lp ON           lp.siteid = st.siteid
+INNER JOIN  ndb.lakeparametertypes AS lpt ON lpt.lakeparameterid = lp.lakeparameterid
+INNER JOIN            dephierarchy AS  dh ON        dh.depenvtid = cu.depenvtid
+GROUP BY lpt.lakeparameterid
+ORDER BY pct DESC;
+```
+
+## `sitegeopolitical` {#SiteGeoPolitical}
+
+This table lists the GeoPolitical units in which sites occur. A site may appear in the table multiple times, for example, some sites may be listed as being in both "Alsace" and "France", so be sure to use terms such as `DISTINCT` or provide some post-processing to your data returns a single instance of each site if you are doing querying across multiple geopolitical ranks.
+
+```{r, sitegeopoltable, echo=FALSE}
+showTable(db, 'sitegeopolitical')
+```
+
+* **`sitegeopoliticalid` (primary key)**: An arbitrary Site GeoPolitical identification number.
+* **`siteid` (foreign key)**: Site identification number. Field links to the [`Sites`](#Sites) table.
+* **`geopoliticalid` (foreign key)**: GeoPolitical identification number. Field links to the [`GeoPoliticalUnits`](#GeoPoliticalUnits) lookup table.
+
+### SQL Example
+
+The following query provides a short list of sites at each geopolitical level, for sites in France, using the `sitegeopolitical` and `geopoliticalunits`. We make use of the `array_agg()` aggregator to produce an array of siteids for each geopolitical unit, and we limit the return to a maximum of five elements per unit.
+
+```{sql, geoPolFranceSitesSQL, connection=db}
+WITH RECURSIVE gpuset AS (
+  SELECT gpu.geopoliticalid,
+         gpu.highergeopoliticalid
+  FROM ndb.geopoliticalunits AS gpu
+  WHERE geopoliticalname = 'France'
+  UNION ALL
+  SELECT gpu.geopoliticalid, 
+         gpu.highergeopoliticalid 
+  FROM ndb.geopoliticalunits AS gpu
+  INNER JOIN gpuset ON gpu.highergeopoliticalid = gpuset.geopoliticalid
+)
+SELECT (array_agg(sgp.siteid))[1:5],
+       gpu.geopoliticalname
+FROM gpuset
+INNER JOIN  ndb.sitegeopolitical AS sgp ON gpuset.geopoliticalid = sgp.geopoliticalid
+INNER JOIN ndb.geopoliticalunits AS gpu ON    gpu.geopoliticalid = sgp.geopoliticalid
+GROUP BY gpu.geopoliticalname
+LIMIT 10;
+```
+
+## `siteimages` {#SiteImages}
+
+This table stores hyperlinks to jpeg images of sites. At present there are very few records with stored site images (9 records, as of June 2022), and the links appear to be largely dead. The table is retained since it may provide utility in the future.
+
 ```{r, siteimagetable, echo=FALSE}
 showTable(db, 'siteimages')
 ```
 
-* **GeoPoliticalID (Primary Key)**: An arbitrary GeoPolitical identification number.
-* **GeoPoliticalName**: Name of the GeoPolitical Unit, e.g. , .
-* **GeoPoliticalUnit**: The name of the unit, e.g. country, state, county, island, governorate, oblast.
-* **Rank**: The rank of the unit.
-* **HigherGeoPoliticalID**: The GeoPoliticalUnit with higher rank, e.g. the country in which a state lies.
+* **`siteimageid` (primary key)**: An arbitrary Site Image identification number.
+* **`siteid` (foreign key)**: Site identification number. Field links to the [`Sites`](#Sites) table.
+* **`contactid` (foreign key)**: Contact identification number for image attribution from the [`Contacts`](#Contacts) table.
+* **`caption`**: Caption for the image.
+* **`credit`**: Credit for the image. If null, the credit is formed from the    ContactID.
+* **`date`**: Date of photograph or image.
+* **`siteimage`**: Hyperlink to a URL for the image.
 
-SQL Example
------------
+## `sites` {#Sites}
 
-The following query lists all the political subdivisions of in the .
+The `sites` table stores information about the geographic information specific to a sampling location, including the name, geographic bounding box, spatial polygon, and site description. Sites generally have an areal extent and can be circumscribed by a latitude-longitude box (using the `latitudenorth` and other numeric bounding variables), but the geospatial object is also stored as a PostGIS `geog` object using a WGS84 projection. Site data ingested from legacy databases may have included only point locations, and additionally, may have been recorded using DMS notation, meaning the decimal expression may appear overly accurate.
 
-``` {.sourceCode .sql}
-SELECT GeoPoliticalUnits\_2.Rank, GeoPoliticalUnits\_2.GeoPoliticalUnit,
-GeoPoliticalUnits\_2.GeoPoliticalName
+The lat-long box can be used either to circumscribe the areal extent of a site or to provide purposeful imprecision to the site location. Site location may be imprecise because of the original description was vague, e.g. «a gravel bar 5 miles east of town», or because the investigators, land owner, or land management agency may not want the exact location made public, perhaps to prevent looting and vandalism. In the first case, the lat-long box can be made sufficiently large to encompass the true location and in the second case to prevent exact location.
 
-FROM (GeoPoliticalUnits AS GeoPoliticalUnits\_2 RIGHT JOIN
-(GeoPoliticalUnits AS GeoPoliticalUnits\_1 RIGHT JOIN GeoPoliticalUnits
-ON GeoPoliticalUnits\_1.HigherGeoPoliticalID =
-GeoPoliticalUnits.GeoPoliticalID) ON
-GeoPoliticalUnits\_2.HigherGeoPoliticalID =
-GeoPoliticalUnits\_1.GeoPoliticalID) LEFT JOIN GeoPoliticalUnits AS
-GeoPoliticalUnits\_3 ON GeoPoliticalUnits\_2.GeoPoliticalID =
-GeoPoliticalUnits\_3.HigherGeoPoliticalID
-
-WHERE (((GeoPoliticalUnits.GeoPoliticalName)="") AND
-((GeoPoliticalUnits\_1.GeoPoliticalName)=""));
+```{r, sitetable, echo=FALSE}
+showTable(db, 'sites')
 ```
 
-The first 17 records of the result:
+* **`siteid` (Primary Key)**: An arbitrary Site identification number.
+* **`sitename`**: Name of the site.
+  * Alternative names, including archaeological site numbers, are placed in square brackets, for example: "New #4 [Lloyd's Rock Hole]" and "Modoc Rock Shelter [11RA501]".
+  * A search of the `sitename` field for any of the alternative names or for the archaeological site number will find the site. Some archaeological sites are known only by their site number. Modifiers to site names are placed in parentheses. Authors are added for generic sites names, especially for surface samples, that are duplicated in the database, for example: "Site 1 (Heusser 1978)", "Site 1 (Delcourt et al. 1983)", "Site 1 (Elliot-Fisk et al. 1982)", "Site 1 (Whitehead and Jackson 1990)"
+  * Historically, when sitenames were duplicated in the database the name was followed by the 2-letter country code and state or province, for example: "Big Lake (US:Maine)", and "Big Lake (US:Arkansas)". This past practice has declined as the number of database stewards has increased and the capacity to provide improved geospatial searching has improved.
+* **`longitudeeast`**: East bounding longitude for a site. Currently generated from an internal trigger through PostGIS to extract the bounding box based on the object spatial polygon.
+* **`latitudenorth`**: North bounding latitude for a site.
+* **`longitudewest`**: West bounding longitude for a site.
+* **`latitudesouth`**: South bounding latitude for a site.
+* **`altitude`**: Altitude of a site in meters.
+* **`area`**: Area of a site in hectares.
+* **`sitedescription`**: Free form description of a site, including such information as    physiography and vegetation around the site.
+* **`notes`**: Free form notes or comments about the site.
 
-  ------------ ------------------------ ------------------------
-  **Rank**     **GeoPoliticalUnit**     **GeoPoliticalName**
+### SQL Example
 
-  3            district                 Omagh
+Site names are often repeated, because geographic names are not required to be unique. Here we examine sites with common names and use PostGIS to calculate the minimum distance between sites with similar names.
 
-  3            district                 North Down
+First we use a CTE to clean the names of the sites. Given the `sitename` protocol described above, we remove the terminal bracketed term from all site names using `regexp_replace()`. We place this into a table called `cleannames` that contains `siteid`, the cleaned name and the `geog` field, the geographic object representing the spatial location of the site.  From here, we join the table on itself (as `name_one` and `name_two`), linking the two tables by common `cleanname`. We also apply a `WHERE` statement that applies the condition `name_one.siteid < name_two.siteid` that makes sure we're not calculating self-distance, or calculating distances twice (e.g., for site (**1 -> 2**) and site (**2 -> 1**)).
 
-  3            district                 Strabane
+The actual inter-site distance is calculated using the *PostGIS* function `ST_Distance`, which returns distance in meters. We convert to km using a combination of rounding and multiplication.
 
-  3            district                 Newry and Mourne
-
-  3            district                 Moyle
-
-  3            district                 Magherafelt
-
-  3            district                 
-
-  4            historical county        
-
-  4            historical county        
-
-  4            historical county        
-
-  4            historical county        
-
-  4            historical county        
-
-  3            district                 Banbridge
-
-  3            district                 Lisburn
-
-  4            historical county        
-
-  3            district                 Ballymoney
-
-  3            district                 Carrickfergus
-  ------------ ------------------------ ------------------------
+```{sql, dubsitedistanceSQL, connection=db}
+WITH cleannames AS (
+       SELECT st.siteid, regexp_replace(st.sitename, ' \(.*$', '') AS cleanname, st.geog
+       FROM ndb.sites AS st
+       WHERE st.sitename LIKE '%\(%' ESCAPE '\'
+)
+SELECT name_one.cleanname,
+       ROUND(MIN(ST_distance(name_one.geog, name_two.geog)) / 100) / 10 AS closest,
+       COUNT(*) + 1 AS sites
+FROM cleannames AS name_one
+INNER JOIN cleannames AS name_two ON name_one.cleanname = name_two.cleanname
+WHERE name_one.siteid < name_two.siteid
+GROUP BY name_one.cleanname
+ORDER BY sites DESC, cleanname
+LIMIT 15;
+```
 
 [^1]: <https://www.cia.gov/library/publications/the-world-factbook/>
 

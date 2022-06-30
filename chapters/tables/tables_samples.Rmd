@@ -1,5 +1,16 @@
 # Sample Related Tables
 
+## `aggregatesamples` {#AggregateSamples}
+
+This table stores the samples in Aggregate Datasets.
+
+```{r, aggregatesamplestable, echo=FALSE}
+showTable(db, 'aggregatesamples')
+```
+
+* **``aggregatedatasetid (primary key, foreign key)``**: An arbitrary Aggregate Dataset identification number. Field links to the [`AggregateDatasets`](#AggregateDatasets) table.
+* **``sampleid (primary key, foreign key)``**: Sample ID number. Field links to the [`Samples`](#Samples) table.
+
 ## `analysisunits` {#AnalysisUnits}
 
 This table stores the data for Analysis Units.
@@ -73,6 +84,52 @@ showTable(db, 'depagenttypes')
 
 * **``depagentid (primary key)``**: An arbitrary Depositional Agent identification number.
 * **``depagent``**: Depostional Agent.
+
+## `faciestypes` {#FaciesTypes}
+
+Lookup table of Facies Types. Table is referenced by the [`AnalysisUnits`](#AnalysisUnits) table.
+
+```{r, faciestypestable, echo=FALSE}
+showTable(db, 'faciestypes')
+```
+
+* **`faciesid (primary key)`**: An arbitrary Facies identification number.
+* **`facies`**: Short Facies description.
+
+## `keywords` {#Keywords}
+
+Lookup table of keywords referenced by the [`samplekeywords`](#SampleKeywords) table. The table provides a means to identify samples sharing a common attribute. For example, the keyword "*modern sample*" identifies modern surface samples in the database. These samples include individual surface samples, as well as core tops. Although not implemented, a "pre-European settlement" keyword would be a means to identify samples just predating European settlement.
+
+```{r, keywordstable, echo=FALSE}
+showTable(db, 'keywords')
+```
+
+* **`keywordid (primary key)`**: An arbitrary Keyword identification number.
+* **`keyword`**: A keyword for identifying samples sharing a common attribute.
+
+## `lithology` {#Lithology}
+
+This table stores the lithologic descriptions of Collection Units.
+
+```{r, Lithologytable, echo=FALSE}
+showTable(db, 'lithology')
+```
+
+* **`lithologyid (primary key)`**:   An arbitrary identification number for a lithologic unit.
+* **`collectionunitid (foreign key)`**:   Collection Unit identification number. Field links to the [`CollectionUnits`](#CollectionUnits) table.
+* **`depthtop`**:   Depth of the top of the lithologic unit in cm.
+* **`depthbottom`**:   Depth of the bottom of the lithologic unit in cm.
+* **`lowerboundary`**:   Description of the nature of the lower boundary of the lithologic unit, e.g. «gradual, over ca. 10 cm».
+* **`description`**:   Description of the lithologic unit. These can be quite detailed, with Munsell color or Troels-Smith descriptions. Some examples:
+  * interbedded gray silt and peat
+  * marly fine-detritus copropel
+  * humified sedge and Sphagnum peat
+  * sedge peat 5YR 5/4
+  * gray sandy loam with mammoth and other animal bones
+  * grey-green gyttja, oxidizing to gray-brown
+  * Ag 3, Ga 1, medium gray, firm, elastic
+  * nig3, strf0, elas2, sicc0; Th2 T12 Tb+
+  * Ld°4, , Dg+, Dh+
 
 ## `sampleages` {#SampleAges}
 
@@ -199,36 +256,3 @@ INNER JOIN ndb.samples AS smp ON smp.analysisunitid = au.analysisunitid
 WHERE st.sitename = 'Canaleja' AND dst.datasettype = 'pollen'
 ORDER BY cu.collunitname, au.analysisunitname
 ```
-
-## `aggregatesamples` {#AggregateSamples}
-
-This table stores the samples in Aggregate Datasets.
-
-```{r, aggregatesamplestable, echo=FALSE}
-showTable(db, 'aggregatesamples')
-```
-
-* **``aggregatedatasetid (primary key, foreign key)``**: An arbitrary Aggregate Dataset identification number. Field links to the [`AggregateDatasets`](#AggregateDatasets) table.
-* **``sampleid (primary key, foreign key)``**: Sample ID number. Field links to the [`Samples`](#Samples) table.
-
-## `faciestypes` {#FaciesTypes}
-
-Lookup table of Facies Types. Table is referenced by the [`AnalysisUnits`](#AnalysisUnits) table.
-
-```{r, faciestypestable, echo=FALSE}
-showTable(db, 'faciestypes')
-```
-
-* **`faciesid (primary key)`**: An arbitrary Facies identification number.
-* **`facies`**: Short Facies description.
-
-## `keywords` {#Keywords}
-
-Lookup table of keywords referenced by the [`samplekeywords`](#SampleKeywords) table. The table provides a means to identify samples sharing a common attribute. For example, the keyword "*modern sample*" identifies modern surface samples in the database. These samples include individual surface samples, as well as core tops. Although not implemented, a "pre-European settlement" keyword would be a means to identify samples just predating European settlement.
-
-```{r, keywordstable, echo=FALSE}
-showTable(db, 'keywords')
-```
-
-* **`keywordid (primary key)`**: An arbitrary Keyword identification number.
-* **`keyword`**: A keyword for identifying samples sharing a common attribute.

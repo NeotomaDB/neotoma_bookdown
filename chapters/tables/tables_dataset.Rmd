@@ -1,15 +1,29 @@
 # Dataset & Collection Related Tables
 
-## AggregateDatasets {#AggregateDatasets}
+## `accumulationrates` {#accumulationrates}
 
-Aggregate Datasets are aggregates of samples of a particular [datasettype](#datasettypes).
+This table represents estimated accumulation rates based on particular chronologies associated with collectionunits. Units are defined within the table. Accumulation rates play an important role in understanding surficial and depositional processes [@Bennett2016], and can be critical for defining relevant priors for Bayesian chronologies [@Goring2012]. While accumulation rates can be calculated on-the-fly, Neotoma also stores accumulation rates when reported, however, at present only 11 chronologies have reported accumulation rates.
+
+```{r, accumulationtable, echo=FALSE}
+showTable(db, 'accumulationrates')
+```
+
+* **`analysisunitid` (foreign key)**: The identifier for the associated analysis unit.
+* **`chronologyid` (foreign key)**
+* **`accumulationrate`**: The rate at which sediment accumulations within a particular analysis unit, defined (generally) as the length of time required to accumulate some depth of sediment (*e.g.*, *yr/cm*).
+* **`variableunitsid` (foreign key)**: Foreign key referencing variable units, describing the units in which the accumulation rate is reported.
+
+## `aggregatedatasets` {#AggregateDatasets}
+
+Aggregate Datasets are aggregates of samples of a particular [`datasettype`](#datasettypes).
 
 Some examples:
 
-> - Plant macrofossil samples from a group of packrat middens collected from a particular valley, mountain range, or other similarly defined geographic area. Each midden is from a different Site or Collection Unit, but they are grouped into time series for that area and are published as single dataset.
-> - Samples collected from 32 cutbanks along several kms of road. Each sample is from a different site, but they form a time series from 0 -- 12,510 ^14^C yr BP, and pollen, plant macrofossils, and beetles were published and graphed as if from a single site.
-> - A set of pollen surface samples from particular region or study that were published and analyzed as a single dataset and submitted to the database as a single dataset.
-> - The examples above are datasets predefined in the database. New aggregate datasets could be assembled for particular studies, for example all the pollen samples for a given time slice for a given geographic region.
+* Plant macrofossil samples from a group of packrat middens collected from a particular valley, mountain range, or other similarly defined geographic area. Each midden is from a different `site` or `collectionunit`, but they are grouped into time series for that area and are published as single dataset.
+* Samples collected from 32 cutbanks along several kms of road. Each sample is from a different site, but they form a time series from 0 -- 12,510 ^14^C yr BP, and pollen, plant macrofossils, and beetles were published and graphed as if from a single site.
+* A set of pollen surface samples from particular region or study that were published and analyzed as a single dataset and submitted to the database as a single dataset.
+
+The examples above are datasets predefined in the database. New aggregate datasets could be assembled for particular studies, for example all the pollen samples for a given time slice for a given geographic region.
 
 ```{r, AggregateDatasetstable, echo=FALSE}
 showTable(db, 'aggregatedatasets')
@@ -20,7 +34,7 @@ showTable(db, 'aggregatedatasets')
 * **`aggregateordertypeid (foreign key)`**:   Aggregate Order Type identification number. Field links to the [`AggregateOrderTypes`](#AggregateOrderTypes) lookup table.
 * **`notes`**:   Free form notes about the Aggregate Order Type.
 
-## aggregateordertypes {#AggregateOrderTypes}
+## `aggregateordertypes` {#AggregateOrderTypes}
 
 Lookup table for Aggregate Order Types. Table is referenced by the
 [`AggregateDatasets`](#AggregateDatasets) table.
@@ -40,7 +54,7 @@ showTable(db, 'aggregateordertypes')
   * **Alphabetical by collection unit name** AggregateDataset samples are ordered alphabetically by [`CollectionUnits`](#CollectionUnits).CollUnitName.
   * **Alphabetical by collection units handle** AggregateDataset samples are ordered alphabetically by [`CollectionUnits`](#CollectionUnits).Handle.
 
-## CollectionTypes {#CollectionTypes}
+## `collectiontypes` {#CollectionTypes}
 
 This table is a lookup table of for types of Collection Units, or Collection Types. Table is referenced by the [`CollectionUnits`](#CollectionUnits) table.
 
@@ -56,7 +70,7 @@ showTable(db, 'collectiontypes')
     different kinds of Analysis Units, for example a modern surface
     sample for ostracodes and an associated water sample.
 
-## CollectionUnits {#CollectionUnits}
+## `collectionunits` {#CollectionUnits}
 
 This table stores data for Collection Units.
 
@@ -83,7 +97,40 @@ showTable(db, 'collectionunits')
 * **`location`**:   Short description of the location of the Collection Unit within the site.
 * **`notes`**:   Free form notes or comments about the Collection Unit.
 
-## DatasetPublications {#DatasetPublications}
+## `contextsdatasettypes` {#contextsdatasettypes}
+
+Reporting for the set of variable contexts associated with each datasettype. This table is used to relate dataset type to variable context to provide users with a custom set of terms when entering and uploading data for a particular datasettype. For example, *Neotoma Pollen:broken* is not available for geochronologic datasets.
+
+```{r, contextsdatasettypestable, echo=FALSE}
+showTable(db, 'contextsdatasettypes')
+```
+
+* **`datasettypeid` (foreign key)**: Link to the datasettype for a particular variable.
+* **`variablecontextid` (foreign key)**: Link to the variable context type.
+
+## `datasetdatabases` {#datasetdatabases}
+
+The constituent database to which a dataset belongs.
+
+## `datasetdoi` {#datasetdoi}
+
+The doi for a dataset.
+
+
+## `datasetpis` {#DatasetPIs}
+
+This table lists the Principle Investigators for Datasets.
+
+```{r, DatasetPIstable, echo=FALSE}
+showTable(db, 'datasetpis')
+```
+
+* **`datasetid (primary key, foreign key)`**:   Dataset identification number. Field links to Dataset table.
+* **`contactid (primary key, foreign key)`**:   Contact identification number. Field links to
+    [`Contacts`](#Contacts) table.
+* **`piorder`**:   Order in which PIs are listed.
+
+## `datasetpublications` {#DatasetPublications}
 
 This table lists the publications for datasets.
 
@@ -95,7 +142,7 @@ showTable(db, 'datasetpublications')
 * **`publicationid (primary key, foreign key)`**:   Publication identification number. Field links to [`Publications`](#Publications) table.
 * **`primarypub`**:   Is «True» if the publication is the primary publication for the dataset.
 
-## Datasets {#Datasets}
+## `datasets` {#Datasets}
 
 This table stores the data for Datasets. A Dataset is the set of samples for a particular data type from a Collection Unit. A Collection Unit may have multiple Datasets for different data types, for example one dataset for pollen and another for plant macrofossils. Every Sample is assigned to a Dataset, and every Dataset is assigned to a Collection Unit. Samples from different Collection Units cannot be assigned to the same Dataset (although they may be assigned to [`AggregateDatasets`](#AggregateDatasets)).
 
@@ -113,65 +160,42 @@ showTable(db, 'datasets')
 
 ### SQL Example
 
-The following query lists the Dataset Types for the site «».
+The following query lists the Dataset Types for the site **Vaifanaura’amo’ora**. Note the kind of apostrophe used here.  Strings with single quotes can be escaped using `''` a double single quote. Here we are using an ASCII apostrophe character.
 
-``` {.sourceCode .sql}
-SELECT Sites.SiteName, DatasetTypes.DatasetType
-
-FROM DatasetTypes INNER JOIN ((Sites INNER JOIN CollectionUnits ON
-Sites.SiteID = CollectionUnits.SiteID) INNER JOIN Datasets ON
-CollectionUnits.CollectionUnitID = Datasets.CollectionUnitID) ON
-DatasetTypes.DatasetTypeID = Datasets.DatasetTypeID
-
-WHERE (((Sites.SiteName)=""));
+```{sql, datasettypesbysitename, connection=db}
+ SELECT dst.datasettype
+ FROM ndb.sites AS st 
+ INNER JOIN ndb.collectionunits AS cu ON cu.siteid = st.siteid 
+ INNER JOIN ndb.datasets AS ds ON ds.collectionunitid = cu.collectionunitid
+ INNER JOIN ndb.datasettypes AS dst ON dst.datasettypeid = ds.datasettypeid
+ WHERE st.sitename = 'Vaifanaura’amo’ora';
 ```
 
-Result:
+### SQL Example
 
-  ---------------- --------------------
-  **SiteName**     **DatasetType**
+This query lists the plant macrofossil taxa located at sites in Neotoma with a defined *plant macrofossil* dataset type. We have to apply a second filter to ensure we are only returning taxa that fit within the vascular plant taxonomic group.
 
-                   Loss-on-ignition
-
-                   pollen
-
-                   geochronologic
-  ---------------- --------------------
-
-SQL Example
------------
-
-This query lists the plant macrofossils identified at site «Bear River No. 3».
-
-``` {.sourceCode .sql}
-SELECT Sites.SiteName, Taxa.TaxonName
-
-FROM DatasetTypes INNER JOIN (Taxa INNER JOIN (Variables INNER JOIN
-((((Sites INNER JOIN CollectionUnits ON Sites.SiteID =
-CollectionUnits.SiteID) INNER JOIN Datasets ON
-CollectionUnits.CollectionUnitID = Datasets.CollectionUnitID) INNER JOIN
-Samples ON Datasets.DatasetID = Samples.DatasetID) INNER JOIN Data ON
-Samples.SampleID = Data.SampleID) ON Variables.VariableID =
-Data.VariableID) ON Taxa.TaxonID = Variables.TaxonID) ON
-DatasetTypes.DatasetTypeID = Datasets.DatasetTypeID
-
-GROUP BY Sites.SiteName, DatasetTypes.DatasetType, Taxa.TaxonName
-
-HAVING (((Sites.SiteName)="Bear River No. 3") AND
-((DatasetTypes.DatasetType)="plant macrofossils"));
+```{sql, planttaxasitename, connection=db}
+SELECT st.sitename,
+       st.siteid,
+       ds.datasetid,
+       array_agg(DISTINCT tx.taxonname)
+FROM ndb.sites AS st 
+INNER JOIN ndb.collectionunits AS  cu ON           cu.siteid = st.siteid
+INNER JOIN        ndb.datasets AS  ds ON ds.collectionunitid = cu.collectionunitid 
+INNER JOIN    ndb.datasettypes AS dst ON   dst.datasettypeid = ds.datasettypeid 
+INNER JOIN         ndb.samples AS smp ON       smp.datasetid = ds.datasetid
+INNER JOIN            ndb.data AS  dt ON         dt.sampleid = smp.sampleid 
+INNER JOIN       ndb.variables AS var ON      var.variableid = dt.variableid
+INNER JOIN            ndb.taxa AS  tx ON         var.taxonid = tx.taxonid
+WHERE st.sitename LIKE '%Lake%' AND 
+      dst.datasettype = 'plant macrofossil' 
+      AND tx.taxagroupid = 'VPL'
+GROUP BY st.siteid, st.sitename, ds.datasetid
+LIMIT 5;
 ```
 
-Result:
-
-  -------------------- --------------------------------------------
-  **SiteName**         **TaxonName**
-
-  Bear River No. 3     Bolboschoenus maritimus subsp. paludosus
-
-  Bear River No. 3     Zea mays
-  -------------------- --------------------------------------------
-
-## DatasetSubmissions {#DatasetSubmissions}
+## ``datasetsubmissions`` {#DatasetSubmissions}
 
 Submissions to the database are of Datasets. Submissions may be original
 submissions, resubmissions, compilations from other databases, or
@@ -183,26 +207,17 @@ showTable(db, 'datasetsubmissions')
 ```
 
 * **`submissionid (primary key)`**:   An arbitrary submission identification number.
-* **`datasetid (foreign key)`**:   Dataset identification number. Field links to the
-    [`Datasets`](#Datasets) table. Datasets may occur
-    multiple times in this table (e.g. once for the original compilation
-    into a different database and a second time for the recompilation
-    into Neotoma).
+* **`datasetid (foreign key)`**:   Dataset identification number. Field links to the [`Datasets`](#Datasets) table. Datasets may occur
+    multiple times in this table (e.g. once for the original compilation into a different database and a second time for the recompilation into Neotoma).
 * **`projectid (foreign key)`**:   Database project responsible for the submission or compilation.
-* **`contactid (foreign key)`**:   Contact identification number. Field links to the
-    [`Contacts`](#Contacts) table. The Contact is the
-    person who submitted, resubmitted, compiled, or recompiled the data.
-    This person is not necessarily the Dataset PI; it is the person who
-    submitted the data or compiled the data from the literature.
+* **`contactid (foreign key)`**:   Contact identification number. Field links to the [`Contacts`](#Contacts) table. The Contact is the person who submitted, resubmitted, compiled, or recompiled the data. This person is not necessarily the Dataset PI; it is the person who submitted the data or compiled the data from the literature.
 * **`submissiondate`**:   Date of the submission, resubmission, compilation, or recompilation.
-* **`submissiontypeid (foreign key)`**:   Submission Type identification number. Field links to the
-    [`DatasetSubmissionTypes`](#DatasetSubmissionTypes) table.
+* **`submissiontypeid (foreign key)`**:   Submission Type identification number. Field links to the [`DatasetSubmissionTypes`](#DatasetSubmissionTypes) table.
 * **`notes`**:   Free form notes or comments about the submission.
 
-## DatasetSubmissionTypes {#DatasetSubmissionTypes}
+## `datasetsubmissiontypes` {#DatasetSubmissionTypes}
 
-Lookup table of Dataset Submission Types. Table is referenced by the
-[`DatasetSubmissions`](#DatasetSubmissions) table.
+Lookup table of Dataset Submission Types. Table is referenced by the [`DatasetSubmissions`](#DatasetSubmissions) table.
 
 ```{r, DatasetSubmissionTypestable, echo=FALSE}
 showTable(db, 'datasetsubmissiontypes')
@@ -210,29 +225,19 @@ showTable(db, 'datasetsubmissiontypes')
 
 * **`submissiontypeid (primary key)`**:   An arbitrary Submission Type identification number.
 * **`submissiontype`**:   Type of submission. The database has the following types:
+  * Original submission from data contributor
+  * Resubmission or revision from data contributor
+  * Compilation into a flat file database
+  * Compilation into a another relational database
+  * Recompilation or revisions to a another relational database
+  * Compilation into Neotoma from another database
+  * Recompilation into Neotoma from another database
+  * Compilation into Neotoma from primary source
+  * Recompilation into or revisions to Neotoma: The initial development of Neotoma involved merging the data from several existing databases, including FAUNMAP, the Global Pollen Database, and the North American Plant Macrofossil Database. Thus original compilation of Datasets was into one of these databases, which were then recompiled into Neotoma. The original compilation and the recompilation into Neotoma are separate submissions.
 
-    -   Original submission from data contributor
-    -   Resubmission or revision from data contributor
-    -   Compilation into a flat file database
-    -   Compilation into a another relational database
-    -   Recompilation or revisions to a another relational database
-    -   Compilation into Neotoma from another database
-    -   Recompilation into Neotoma from another database
-    -   Compilation into Neotoma from primary source
-    -   Recompilation into or revisions to Neotoma: The initial
-        development of Neotoma involved merging the data from several
-        existing databases, including FAUNMAP, the Global Pollen
-        Database, and the North American Plant Macrofossil Database.
-        Thus original compilation of Datasets was into one of these
-        databases, which were then recompiled into Neotoma. The original
-        compilation and the recompilation into Neotoma are separate
-        submissions.
+### SQL Example
 
-SQL Example
------------
-
-This query gives a list of Dataset Submissions for the site «Bear River
-No. 3» ordered by date.
+This query gives a list of Dataset Submissions for the site «Bear River No. 3» ordered by date.
 
 ``` {.sourceCode .sql}
 SELECT DatasetTypes.DatasetType, Projects.ProjectName,
@@ -252,33 +257,15 @@ WHERE (((Sites.SiteName)="Bear River No. 3"))
 ORDER BY DatasetSubmissions.SubmissionDate;
 ```
 
-Result:
+## `datasettaxagrouptypes` {#datasettaxagrouptypes}
 
-  ----------------- ----------------- -------------------- ---------------------- -------------------
-  **DatasetType**   **ProjectName**   **SubmissionDate**   **SubmissionType**     **Notes**
+Taxon groups associated with a dataset.
 
-  vertebrate fauna  FAUNMAP           1/31/1992            Compilation into a      
-                                                           another relational     
-                                                           database               
+## `datasettaxonnotes` {#datasettaxonnotes}
 
-  vertebrate fauna  Neotoma           11/24/2007           Compilation into       Compiled from
-                                                           Neotoma from another   FAUNMAP
-                                                           database               
+Notes associated with taxa within a particular dataset.
 
-  mollusks          Neotoma           11/25/2007           Compilation into        
-                                                           Neotoma from primary   
-                                                           source                 
-
-  plant             Neotoma           11/25/2007           Compilation into        
-  macrofossils                                             Neotoma from primary   
-                                                           source                 
-
-  vertebrate fauna  Neotoma           11/25/2007           Recompilation into or  Bison elements,
-                                                           revisions to Neotoma   fish, and birds
-                                                                                  added.
-  ----------------- ----------------- -------------------- ---------------------- -------------------
-
-## DatasetTypes {#DatasetTypes}
+## `datasettypes` {#DatasetTypes}
 
 Lookup table for Dataset Types. Table is referenced by the [`Datasets`](#Datasets) table.
 
@@ -288,28 +275,18 @@ showTable(db, 'datasetsubmissions')
 
 * **`datasettypeid (primary key)`**:   An arbitrary Dataset Type identification number.
 * **`datasettype`**:   The Dataset type, including the following:
+  * geochronologic
+  * loss-on-ignition
+  * pollen
+  * plant macrofossils
+  * vertebrate fauna
+  * mollusks
 
-    > -   geochronologic
-    > -   loss-on-ignition
-    > -   pollen
-    > -   plant macrofossils
-    > -   vertebrate fauna
-    > -   mollusks
+## `datasetvariables` {#datasetvariables}
 
-## DatasetPIs {#DatasetPIs}
+The variables associated with a particular dataset.
 
-This table lists the Principle Investigators for Datasets.
-
-```{r, DatasetPIstable, echo=FALSE}
-showTable(db, 'datasetpis')
-```
-
-* **`datasetid (primary key, foreign key)`**:   Dataset identification number. Field links to Dataset table.
-* **`contactid (primary key, foreign key)`**:   Contact identification number. Field links to
-    [`Contacts`](#Contacts) table.
-* **`piorder`**:   Order in which PIs are listed.
-
-## DepEnvtTypes {#DepEnvtTypes}
+## `depenvttypes` {#DepEnvtTypes}
 
 Lookup table of Depostional Environment Types. Table is referenced by
 the [`CollectionUnits`](#CollectionUnits) table.
@@ -320,159 +297,36 @@ showTable(db, 'depenvttypes')
 
 * **`depenvtid (primary key)`**:   An arbitrary Depositional Environment Type identification number.
 * **`depenvt`**:   Depositional Environment.
-* **`depenvthigherid`**:   The Depositional Environment Types are hierarchical. DepEnvtHigherID
-    is the DepEnvtID of the higher ranked Depositional Environment. See
-    following table gives some examples.
+* **`depenvthigherid`**:   The Depositional Environment Types are hierarchical. DepEnvtHigherID is the DepEnvtID of the higher ranked Depositional Environment. The linked example provides some context:
 
-+---------------------+---------------+-----------------------+
-| > **DepEnvtID**     | **DepEnvt**   | **DepEnvtHigherID**   |
-+---------------------+---------------+-----------------------+
-| > 19                | Lacustrine    | 19                    |
-+---------------------+---------------+-----------------------+
-| > 24                |               | 19                    |
-+---------------------+---------------+-----------------------+
-| > 29                | Glacial       | 24                    |
-+---------------------+---------------+-----------------------+
-| > 30                |               | 29                    |
-+---------------------+---------------+-----------------------+
-| > 33                |               | 29                    |
-+---------------------+---------------+-----------------------+
-| > 59                | Palustrine    | 59                    |
-+---------------------+---------------+-----------------------+
-| > 61                | Mire          | 59                    |
-+---------------------+---------------+-----------------------+
-| > 62                | Bog           | 61                    |
-+---------------------+---------------+-----------------------+
-| > 63                | Blanket Bog   | 62                    |
-+---------------------+---------------+-----------------------+
-| > 64                | Raised Bog    | 62                    |
-+---------------------+---------------+-----------------------+
+### SQL Example
 
-SQL Example
------------
+This query gives a list of the top level depostional environment types.
 
-This query gives a list of the top level Depostional Environment Types.
-
-``` {.sourceCode .sql}
-SELECT DepEnvtTypes.DepEnvtID, DepEnvtTypes.DepEnvt,
-DepEnvtTypes.DepEnvtHigherID
-
-FROM DepEnvtTypes INNER JOIN DepEnvtTypes AS DepEnvtTypes\_1 ON
-(DepEnvtTypes.DepEnvt = DepEnvtTypes\_1.DepEnvt) AND
-(DepEnvtTypes.DepEnvtHigherID = DepEnvtTypes\_1.DepEnvtID);
+```{sql, deptypetoplevel, connection=db}
+SELECT dt.depenvtid, dt.depenvt
+FROM ndb.depenvttypes AS dt
+WHERE dt.depenvtid = dt.depenvthigherid;
 ```
 
-Result:
+### SQL Example
 
-  ----------------- ------------------ -----------------------
-  **DepEnvtID**     **DepEnvt**        **DepEnvtHigherID**
+This query uses a recursive CTE to provide a list of all the types of *Sampler* in Neotoma. The array in `deagg` represents the hierarchy of the sampler. So, for example, we see that the *Gosling Trap* is considered a form of *Pollen Trap (Terrestrial)*, which is a form of *Pollen Trap*.
 
-  1                 Archaeological     1
-
-  6                 Biological         6
-
-  16                Estuarine          16
-
-  19                Lacustrine         19
-
-  51                Marine             51
-
-  59                Palustrine         59
-
-  76                Riverine           76
-
-  93                Sampler            93
-
-  99                Spring             99
-
-  103               Terrestrial        103
-
-  136               Other              136
-
-  137               Unknown            137
-  ----------------- ------------------ -----------------------
-
-SQL Example
------------
-
-This following query gives a list of the second level «Terrestrial»
-Depositional Environment Types.
-
-``` {.sourceCode .sql}
-SELECT DepEnvtTypes\_1.DepEnvtID, DepEnvtTypes\_1.DepEnvt,
-DepEnvtTypes\_1.DepEnvtHigherID
-
-FROM DepEnvtTypes INNER JOIN DepEnvtTypes AS DepEnvtTypes\_1 ON
-DepEnvtTypes.DepEnvtID = DepEnvtTypes\_1.DepEnvtHigherID
-
-WHERE (((DepEnvtTypes.DepEnvt)="Terrestrial"));
+``` {sql, deptypesamplers, connection=db}
+WITH RECURSIVE dephierarchy AS (
+  SELECT de.depenvtid,
+         de.depenvt,
+         ARRAY[de.depenvtid] AS deagg
+  FROM ndb.depenvttypes AS de
+  WHERE de.depenvt = 'Sampler'
+  UNION ALL 
+  SELECT de.depenvtid,
+         de.depenvt,
+         dephierarchy.deagg || de.depenvtid
+  FROM ndb.depenvttypes AS de 
+  INNER JOIN dephierarchy ON de.depenvthigherid = dephierarchy.depenvtid
+  WHERE NOT de.depenvtid = dephierarchy.depenvtid
+)
+SELECT * FROM dephierarchy;
 ```
-
-Result:
-
-  ----------------- --------------- -----------------------
-  **DepEnvtID**     **DepEnvt**     **DepEnvtHigherID**
-
-  103               Terrestrial     103
-
-  104               Aeolian         103
-
-  109               Cave            103
-
-  117               Glacial         103
-
-  122               Gravity         103
-
-  127               Soil            103
-
-  131               Volcanic        103
-  ----------------- --------------- -----------------------
-
-## Lithology {#Lithology}
-
-This table stores the lithologic descriptions of Collection Units.
-
-```{r, Lithologytable, echo=FALSE}
-showTable(db, 'lithology')
-```
-
-* **`lithologyid (primary key)`**:   An arbitrary identification number for a lithologic unit.
-* **`collectionunitid (foreign key)`**:   Collection Unit identification number. Field links to the
-    [`CollectionUnits`](#CollectionUnits) table.
-* **`depthtop`**:   Depth of the top of the lithologic unit in cm.
-* **`depthbottom`**:   Depth of the bottom of the lithologic unit in cm.
-* **`lowerboundary`**:   Description of the nature of the lower boundary of the lithologic
-    unit, e.g. «gradual, over ca. 10 cm».
-* **`description`**:   Description of the lithologic unit. These can be quite detailed,
-    with Munsell color or Troels-Smith descriptions. Some examples:
-
-    -   interbedded gray silt and peat
-    -   marly fine-detritus copropel
-    -   humified sedge and Sphagnum peat
-    -   sedge peat 5YR 5/4
-    -   gray sandy loam with mammoth and other animal bones
-    -   grey-green gyttja, oxidizing to gray-brown
-    -   Ag 3, Ga 1, medium gray, firm, elastic
-    -   nig3, strf0, elas2, sicc0; Th2 T12 Tb+
-    -   Ld°4, , Dg+, Dh+
-
-## Projects {#Projects}
-
-This table stores a list of database projects that have supplied data to
-Neotoma. These include the databases that were merged in the initial
-development of Neotoma as well as other independent projects that
-continue to assemble data for a particular region or data type. Some of
-these projects have developed relational databases, whereas others have
-compiled data in flat files. This table is referenced by the
-[`DatasetSubmissions`](#DatasetSubmissions) table.
-
-```{r, Projectstable, echo=FALSE}
-showTable(db, 'projects')
-```
-
-* **`projectid (primary key)`**:   An arbitrary Project identification number.
-* **`projectname`**:   Name of the Project, e.g. «Cooperative Holocene Mapping Project»,
-    «North American Pollen Database», «FAUNMAP».
-* **`contactid (foreign key)`**:   Contact person for the project. Field links to the
-    [`Contacts`](#Contacts) table.
-* **`url`**:   Web site address for the project.

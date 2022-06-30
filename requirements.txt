@@ -4,3 +4,4 @@ RPostgres
 jsonlite
 DT
 ggplot2
+crosstalk

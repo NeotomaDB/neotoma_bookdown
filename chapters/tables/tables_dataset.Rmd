@@ -15,7 +15,7 @@ showTable(db, 'accumulationrates')
 
 ## `aggregatedatasets` {#AggregateDatasets}
 
-Aggregate Datasets are aggregates of samples of a particular [`datasettype`](#datasettypes).
+Aggregate Datasets are aggregates of samples of a particular [`datasettypes`](#datasettypes).
 
 Some examples:
 
@@ -31,13 +31,13 @@ showTable(db, 'aggregatedatasets')
 
 * **`aggregatedatasetid (primary key)`**:   An arbitrary Aggregate Dataset identification number.
 * **`aggregatedatasetname`**:   Name of Aggregate Dataset.
-* **`aggregateordertypeid (foreign key)`**:   Aggregate Order Type identification number. Field links to the [`AggregateOrderTypes`](#AggregateOrderTypes) lookup table.
+* **`aggregateordertypeid (foreign key)`**:   Aggregate Order Type identification number. Field links to the [`aggregateordertypes`](#AggregateOrderTypes) lookup table.
 * **`notes`**:   Free form notes about the Aggregate Order Type.
 
 ## `aggregateordertypes` {#AggregateOrderTypes}
 
 Lookup table for Aggregate Order Types. Table is referenced by the
-[`AggregateDatasets`](#AggregateDatasets) table.
+[`aggregatedatasets`](#AggregateDatasets) table.
 
 ```{r, aggregateordertypestable, echo=FALSE}
 showTable(db, 'aggregateordertypes')
@@ -46,17 +46,17 @@ showTable(db, 'aggregateordertypes')
 * **`aggregateordertypeid (primary key)`**:   An arbitrary Aggregate Order Type identification number.
 * **`aggregateordertype`**:   The Aggregate Order Type.
 * **`notes`**: Free form notes or comments about the Aggregate Order Type.  The Aggregate Order Types are:
-  * **Latitude**: AggregateDataset samples are ordered by, in order of priority, either (1) [`CollectionUnits`](#CollectionUnits) GPSLatitude or (2) the mean of [`Sites`](#Sites).LatitudeNorth and [`Sites`](#Sites) LatitudeSouth.
-  * **Longitude** AggregateDataset samples are ordered by, in order of priority, either (1) [`CollectionUnits`](#CollectionUnits) GPSLongitude or (2) the mean of [`Sites`](#Sites).LongitudeWest and [`Sites`](#Sites).LongitudeEast.
-  * **Altitude** AggregateDataset samples are ordered by [`Sites`](#Sites) Altitude.
-  * **Age** AggregateDataset samples are ordered by [`SampleAges`](#SampleAges).Age, where [`SampleAges`](#SampleAges).SampleAgeID is from [`AggregateSampleAges`](#AggregateSampleAges).SampleAgeID.
-  * **Alphabetical by site name** AggregateDataset samples are ordered alphabetically by [`Sites`](#Sites).SiteName.
-  * **Alphabetical by collection unit name** AggregateDataset samples are ordered alphabetically by [`CollectionUnits`](#CollectionUnits).CollUnitName.
-  * **Alphabetical by collection units handle** AggregateDataset samples are ordered alphabetically by [`CollectionUnits`](#CollectionUnits).Handle.
+  * **Latitude**: AggregateDataset samples are ordered by, in order of priority, either (1) [`collectionunits`](#CollectionUnits) GPSLatitude or (2) the mean of [`sites`](#Sites).LatitudeNorth and [`sites`](#Sites) LatitudeSouth.
+  * **Longitude** AggregateDataset samples are ordered by, in order of priority, either (1) [`collectionunits`](#CollectionUnits) GPSLongitude or (2) the mean of [`sites`](#Sites).LongitudeWest and [`sites`](#Sites).LongitudeEast.
+  * **Altitude** AggregateDataset samples are ordered by [`sites`](#Sites) Altitude.
+  * **Age** AggregateDataset samples are ordered by [`sampleages`](#SampleAges).Age, where [`sampleages`](#SampleAges).SampleAgeID is from [`aggregatesampleages`](#AggregateSampleAges).SampleAgeID.
+  * **Alphabetical by site name** AggregateDataset samples are ordered alphabetically by [`sites`](#Sites).SiteName.
+  * **Alphabetical by collection unit name** AggregateDataset samples are ordered alphabetically by [`collectionunits`](#CollectionUnits).CollUnitName.
+  * **Alphabetical by collection units handle** AggregateDataset samples are ordered alphabetically by [`collectionunits`](#CollectionUnits).Handle.
 
 ## `collectiontypes` {#CollectionTypes}
 
-This table is a lookup table of for types of Collection Units, or Collection Types. Table is referenced by the [`CollectionUnits`](#CollectionUnits) table.
+This table is a lookup table of for types of Collection Units, or Collection Types. Table is referenced by the [`collectionunits`](#CollectionUnits) table.
 
 ```{r, CollectionTypestable, echo=FALSE}
 showTable(db, 'collectiontypes')
@@ -79,9 +79,9 @@ showTable(db, 'collectionunits')
 ```
 
 * **`collectionunitid (primary key)`**:   An arbitrary Collection Unit identification number.
-* **`siteid (foreign key)`**:   Site where CollectionUnit was located. Field links to [`Sites`](#Sites) table.
-* **`colltypeid (foreign key)`**:   Type of Collection Unit. Field links to the [`CollectionTypes`](#CollectionTypes) table.
-* **`depenvtid (foreign key)`**:   Depositional environment of the CollectionUnit. Normally, this key refers to the modern environment. For example, the site may be located on a colluvial slope, in which case the Depositional Environment may be Colluvium or Colluvial Fan. However, an excavation may extend into alluvial sediments, which represent a different depositional environment. These are accounted for by the Facies of the AnalysisUnit. Field links to the [`DepEnvtTypes`](#DepEnvtTypes) table.
+* **`siteid (foreign key)`**:   Site where CollectionUnit was located. Field links to [`sites`](#Sites) table.
+* **`colltypeid (foreign key)`**:   Type of Collection Unit. Field links to the [`collectiontypes`](#CollectionTypes) table.
+* **`depenvtid (foreign key)`**:   Depositional environment of the CollectionUnit. Normally, this key refers to the modern environment. For example, the site may be located on a colluvial slope, in which case the Depositional Environment may be Colluvium or Colluvial Fan. However, an excavation may extend into alluvial sediments, which represent a different depositional environment. These are accounted for by the Facies of the AnalysisUnit. Field links to the [`depenvttypes`](#DepEnvtTypes) table.
 * **`handle`**:   Code name for the Collection Unit. This code may be up to 10 characters, but an effort is made to keep these to 8 characters or less. Data are frequently distributed by Collection Unit, and the Handle is used for file names.
 * **`collunitname`**:   Name of the Collection Unit. Examples: Core BPT82A, Structure 9, P4A Test 57. If faunal data are reported from a site or locality without explicit Collection Units, then data are assigned to a single Collection Unit with the name «Locality».
 * **`colldate`**:   Date Collection Unit was collected.
@@ -127,7 +127,7 @@ showTable(db, 'datasetpis')
 
 * **`datasetid (primary key, foreign key)`**:   Dataset identification number. Field links to Dataset table.
 * **`contactid (primary key, foreign key)`**:   Contact identification number. Field links to
-    [`Contacts`](#Contacts) table.
+    [`contacts`](#Contacts) table.
 * **`piorder`**:   Order in which PIs are listed.
 
 ## `datasetpublications` {#DatasetPublications}
@@ -138,13 +138,13 @@ This table lists the publications for datasets.
 showTable(db, 'datasetpublications')
 ```
 
-* **`datasetid (primary key, foreign key)`**:   Dataset identification number. Field links to [`Datasets`](#Datasets) table.
-* **`publicationid (primary key, foreign key)`**:   Publication identification number. Field links to [`Publications`](#Publications) table.
+* **`datasetid (primary key, foreign key)`**:   Dataset identification number. Field links to [`datasets`](#Datasets) table.
+* **`publicationid (primary key, foreign key)`**:   Publication identification number. Field links to [`publications`](#Publications) table.
 * **`primarypub`**:   Is «True» if the publication is the primary publication for the dataset.
 
 ## `datasets` {#Datasets}
 
-This table stores the data for Datasets. A Dataset is the set of samples for a particular data type from a Collection Unit. A Collection Unit may have multiple Datasets for different data types, for example one dataset for pollen and another for plant macrofossils. Every Sample is assigned to a Dataset, and every Dataset is assigned to a Collection Unit. Samples from different Collection Units cannot be assigned to the same Dataset (although they may be assigned to [`AggregateDatasets`](#AggregateDatasets)).
+This table stores the data for Datasets. A Dataset is the set of samples for a particular data type from a Collection Unit. A Collection Unit may have multiple Datasets for different data types, for example one dataset for pollen and another for plant macrofossils. Every Sample is assigned to a Dataset, and every Dataset is assigned to a Collection Unit. Samples from different Collection Units cannot be assigned to the same Dataset (although they may be assigned to [`aggregatedatasets`](#AggregateDatasets)).
 
 ```{r, Datasetstable, echo=FALSE}
 showTable(db, 'datasets')
@@ -152,9 +152,9 @@ showTable(db, 'datasets')
 
 * **`datasetid (primary key)`**:   An arbitrary Dataset identification number.
 * **`collectionunitid (foreign key)`**:   Collection Unit identification number. Field links to the
-    [`CollectionUnits`](#CollectionUnits) table.
+    [`collectionunits`](#CollectionUnits) table.
 * **`datasettypeid (foreign key)`**:   Dataset Type identification number. Field links to the
-    [`DatasetTypes`](#DatasetTypes) lookup table.
+    [`datasettypes`](#DatasetTypes) lookup table.
 * **`datasetname`**:   Optional name for the Dataset.
 * **`notes`**:   Free form notes or comments about the Dataset.
 
@@ -200,24 +200,24 @@ LIMIT 5;
 Submissions to the database are of Datasets. Submissions may be original
 submissions, resubmissions, compilations from other databases, or
 recompilations. See the description of the
-[`DatasetSubmissionTypes`](#DatasetSubmissionTypes) table.
+[`datasetsubmissiontypes`](#DatasetSubmissionTypes) table.
 
 ```{r, DatasetSubmissionstable, echo=FALSE}
 showTable(db, 'datasetsubmissions')
 ```
 
 * **`submissionid (primary key)`**:   An arbitrary submission identification number.
-* **`datasetid (foreign key)`**:   Dataset identification number. Field links to the [`Datasets`](#Datasets) table. Datasets may occur
+* **`datasetid (foreign key)`**:   Dataset identification number. Field links to the [`datasets`](#Datasets) table. Datasets may occur
     multiple times in this table (e.g. once for the original compilation into a different database and a second time for the recompilation into Neotoma).
 * **`projectid (foreign key)`**:   Database project responsible for the submission or compilation.
-* **`contactid (foreign key)`**:   Contact identification number. Field links to the [`Contacts`](#Contacts) table. The Contact is the person who submitted, resubmitted, compiled, or recompiled the data. This person is not necessarily the Dataset PI; it is the person who submitted the data or compiled the data from the literature.
+* **`contactid (foreign key)`**:   Contact identification number. Field links to the [`contacts`](#Contacts) table. The Contact is the person who submitted, resubmitted, compiled, or recompiled the data. This person is not necessarily the Dataset PI; it is the person who submitted the data or compiled the data from the literature.
 * **`submissiondate`**:   Date of the submission, resubmission, compilation, or recompilation.
-* **`submissiontypeid (foreign key)`**:   Submission Type identification number. Field links to the [`DatasetSubmissionTypes`](#DatasetSubmissionTypes) table.
+* **`submissiontypeid (foreign key)`**:   Submission Type identification number. Field links to the [`datasetsubmissiontypes`](#DatasetSubmissionTypes) table.
 * **`notes`**:   Free form notes or comments about the submission.
 
 ## `datasetsubmissiontypes` {#DatasetSubmissionTypes}
 
-Lookup table of Dataset Submission Types. Table is referenced by the [`DatasetSubmissions`](#DatasetSubmissions) table.
+Lookup table of Dataset Submission Types. Table is referenced by the [`datasetsubmissions`](#DatasetSubmissions) table.
 
 ```{r, DatasetSubmissionTypestable, echo=FALSE}
 showTable(db, 'datasetsubmissiontypes')
@@ -267,7 +267,7 @@ Notes associated with taxa within a particular dataset.
 
 ## `datasettypes` {#DatasetTypes}
 
-Lookup table for Dataset Types. Table is referenced by the [`Datasets`](#Datasets) table.
+Lookup table for Dataset Types. Table is referenced by the [`datasets`](#Datasets) table.
 
 ```{r, datasettypestable, echo=FALSE}
 showTable(db, 'datasetsubmissions')
@@ -289,7 +289,7 @@ The variables associated with a particular dataset.
 ## `depenvttypes` {#DepEnvtTypes}
 
 Lookup table of Depostional Environment Types. Table is referenced by
-the [`CollectionUnits`](#CollectionUnits) table.
+the [`collectionunits`](#CollectionUnits) table.
 
 ```{r, DepEnvtTypestable, echo=FALSE}
 showTable(db, 'depenvttypes')

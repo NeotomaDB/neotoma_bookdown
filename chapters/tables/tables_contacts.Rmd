@@ -2,16 +2,35 @@
 
 ## `collectors` {#Collectors}
 
-The `collectors` table lists the people who were responsible for collecting a particular collection unit. 
+The `collectors` table lists the people who were responsible for collecting a particular collection unit. This is part of the complete set of individuals who collect, analyze, publish and process the data for contribution to Neotoma. Other related tables include [`publicationsauthors`](#PublicationAuthors), [`sampleanalysts`](#SampleAnalysts), and [`datasetsubmissions`](#DatasetSubmissions).
 
 ```{r, collectorstable, echo=FALSE}
 showTable(db, 'collectors')
 ```
 
-* **`collectorid (primary key)`**: An arbitrary Collector identification number.
-* **`collectionunitid (foreign key)`**]: The `collectionunitid` for the record that was collected. Field links to the [`collectionunits`](#CollectionUnits) table.
-* **`contactid (foreign key)`**: Person who collected the CollectionUnit. Multiple individuals are listed in separate records. Field links to the [`contacts`](#Contacts) table.
+* **`collectorid` (primary key)**: An arbitrary Collector identification number.
+* **`collectionunitid` (foreign key)**]: The `collectionunitid` for the record that was collected. Field links to the [`collectionunits`](#CollectionUnits) table.
+* **`contactid` (foreign key)**: Person who collected the CollectionUnit. Multiple individuals are listed in separate records. Field links to the [`contacts`](#Contacts) table.
 * **`collectororder`**: Order in which the collectors should be listed.
+
+### SQL Example
+
+We want to see the top contributors for each constitutent database, so we calculate the sum of each appearance of a contributor/database, and then return the `COUNT(*)`. The `DISTINCT ON` pattern allows us to select a single instance of the field `db.databasename`, that has been ordered by the descending `COUNT(*)` per individual, and database. This then ensures we have the top `collectionunit` collector for each constituent database.
+
+```{sql, topcontribdb, connection=db}
+SELECT DISTINCT ON (db.databasename)
+       ct.contactname, 
+       db.databasename,
+       COUNT(*)
+FROM ndb.contacts AS ct
+INNER JOIN ndb.collectors AS co ON co.contactid = ct.contactid
+INNER JOIN ndb.collectionunits AS cu ON cu.collectionunitid = co.collectionunitid
+INNER JOIN ndb.datasets AS ds ON ds.collectionunitid = cu.collectionunitid
+INNER JOIN ndb.datasetdatabases AS dsdb ON dsdb.datasetid = ds.datasetid
+INNER JOIN ndb.constituentdatabases AS db ON db.databaseid = dsdb.databaseid
+GROUP BY db.databasename, ct.contactname
+ORDER BY db.databasename, COUNT(*) DESC;
+```
 
 ## `contacts` {#Contacts}
 

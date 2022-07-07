@@ -1,6 +1,6 @@
 # Publication Related Tables
 
-## publicationauthors {#publicationauthors}
+## `publicationauthors` {#publicationauthors}
 
 This table lists authors as their names are given in publications. Only the initials are stored for authors' given names. The ContactID links to the author's full name and contact data in the `contacts`{.interpreted-text role="ref"} table. Thus, for a bibliographic entry, Charles Robert Darwin is listed as C. R. Darwin, or as C. Darwin if the publication did not include his middle name. Book editors are also stored in this table if the entire book is cited. However, if a book chapter or section is cited, authors are stored in this table, but the book editors are stored in the `publicationeditors`{.interpreted-text role="ref"} table. Thus, for the following reference, G. C. Frison is stored in the `publicationauthors`{.interpreted-text role="ref"} table.
 
@@ -116,8 +116,8 @@ This table stores the editors of publications for which chapters or sections are
 
 :   Authors suffix (e.g. «Jr.»)
 
-Publications {#Publications}
-============
+## `publications` {#Publications}
+
 
 This table stores publication or bibliographic data. The table is designed with fields for bibliographic data so that bibliographies can be formatted in different styles and potentially exported to bibliographic software such EndNote®. In the constituent databases that were originally merged into Neotoma, bibliographic entries were not parsed into separate fields, but rather were stored as free-form text.
 
@@ -313,8 +313,8 @@ Authors are stored in the `PublicationAuthors`{.interpreted-text role="ref"} tab
 :   Free form notes or comments about the publication, which may be
     added parenthetically to the citation.
 
-PublicationTypes {#PublicationTypes}
-================
+## `publicationtypes` {#PublicationTypes}
+
 
 Lookup table of Publication Types. This table is referenced by the
 `Publications`{.interpreted-text role="ref"} table.
@@ -361,8 +361,7 @@ sections. Shown for each Publication Type are the fields in the
 for that type, with the exception that OriginalLanguage and Notes are
 not shown unless used.
 
-Legacy Publication
-------------------
+### Legacy Publication
 
   ---------------- ------------------------------------------------------
   **PubTypeID =    
@@ -415,8 +414,7 @@ Legacy Publication
 |       Minnesota Press, Minneapolis.                                   |
 +-----------------------------------------------------------------------+
 
-Journal Article
----------------
+### Journal Article
 
   ---------------- ------------------------------------------------------
   **PubTypeID =    
@@ -564,8 +562,7 @@ Journal Article
   OriginalLanguage \| Russian
   -----------------------------------------------------------------------
 
-Book Chapter
-------------
+### Book Chapter
 
   ------------------ ----------------------------------------------------
   **PubTypeID = Book 
@@ -738,8 +735,7 @@ Book Chapter
   Country \|
   -----------------------------------------------------------------------
 
-Authored Book
--------------
+### Authored Book
 
 A book published by a single, or multiple authors.
 
@@ -881,8 +877,7 @@ A book published by a single, or multiple authors.
   Country \|
   -----------------------------------------------------------------------
 
-Edited Book
------------
+### Edited Book
 
   ------------------ ----------------------------------------------------
   **PubTypeID =      
@@ -1034,8 +1029,7 @@ Edited Book
 | Country \|                                                            |
 +-----------------------------------------------------------------------+
 
-Master's Thesis
----------------
+### Master's Thesis
 
   -------------------- --------------------------------------------------
   **PubTypeID =        
@@ -1087,8 +1081,7 @@ Master's Thesis
 | Country \| USA                                                        |
 +-----------------------------------------------------------------------+
 
-Doctoral Dissertation
----------------------
+### Doctoral Dissertation
 
   ------------------------ ----------------------------------------------
   **PubTypeID = Doctoral   
@@ -1141,8 +1134,7 @@ Doctoral Dissertation
 | Country \|                                                            |
 +-----------------------------------------------------------------------+
 
-Authored Report
----------------
+### Authored Report
 
   -----------------------------------------------------------------------
   **PubTypeID = Authored Report**
@@ -1275,8 +1267,7 @@ Authored Report
 | Country \|                                                            |
 +-----------------------------------------------------------------------+
 
-Edited Report
--------------
+### Edited Report
 
   ------------------- ---------------------------------------------------
   **PubTypeID =       

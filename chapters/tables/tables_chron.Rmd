@@ -1,6 +1,6 @@
 # Chronology & Age Related Tables
 
-## AgeTypes {#AgeTypes}
+## `agetypes` {#AgeTypes}
 
 Lookup table of Age Types or units. This table is referenced by the [`chronologies`](#Chronologies) and [`geochronology`](#Geochronology) tables.
 
@@ -8,7 +8,7 @@ Lookup table of Age Types or units. This table is referenced by the [`chronologi
 showTable(db, 'agetypes')
 ```
 
-* **`agetypeid (primary key)`**: An arbitrary Age Type identification number.
+* **`agetypeid` (primary key)**: An arbitrary Age Type identification number.
 * **`agetype`**: Age type or units. Includes the following:
   * Calendar years AD/BC
   * Calendar years BP
@@ -16,7 +16,7 @@ showTable(db, 'agetypes')
   * Radiocarbon years BP
   * Varve years BP
 
-## AggregateChronologies {#AggregateChronologies}
+## `aggregatechronologies` {#AggregateChronologies}
 
 This table stores metadata for Aggregate Chronologies. An Aggregate Chronology refers to an explicit chronology assigned to a sample Aggregate. The individual Aggregate Samples have ages assigned in the [`aggregatesampleages`](#AggregateSampleAges) table. An Aggregate Chronology would be used, for example, for a set of packrat middens assigned to an [`aggregatedatasets`](#AggregateDatasets). The Aggregate Chronology is analagous to the Chronology assigned to samples from a single Collection Unit.
 
@@ -26,16 +26,16 @@ An Aggregate may have more than one Aggregate Chronology, for example one in rad
 showTable(db, 'aggregatechronologies')
 ```
 
-* **`aggregatechronid (primary key)`**: An arbitrary Aggregate Chronology identification number.
-* **`aggregatedatasetid (foreign key)`**: Dataset to which the Aggregate Chronology applies. Field links to the [`aggregatedatasets`](#AggregateDatasets) table.
-* **`agetypeid (foreign key)`**: Age type or units. Field links to the [`agetypes`](#AgeTypes) table.
+* **`aggregatechronid` (primary key)**: An arbitrary Aggregate Chronology identification number.
+* **`aggregatedatasetid` (foreign key)**: Dataset to which the Aggregate Chronology applies. Field links to the [`aggregatedatasets`](#AggregateDatasets) table.
+* **`agetypeid` (foreign key)**: Age type or units. Field links to the [`agetypes`](#AgeTypes) table.
 * **`isdefault`**: Indicates whether the Aggregate Chronology is a default or not. Default status is determined by a Neotoma data steward. Aggregate Datasets may have more than one default Aggregate Chronology, but may have only one default Aggregate Chronology per Age Type.
 * **`chronologyname`**: Optional name for the Chronology.
 * **`ageboundyounger`**: The younger reliable age bound for the Aggregate Chronology. Younger ages may be assigned to samples, but are not regarded as reliable. If the entire Chronology is considered reliable, AgeBoundYounger is assigned the youngest sample age rounded down to the nearest 10. Thus, for 72 BP, AgeBoundYounger = 70 BP; for -45 BP, AgeBoundYounger = -50 BP.
 * **`ageboundolder`**: The older reliable age bound for the Aggregate Chronology. Ages older than AgeOlderBound may be assigned to samples, but are not regarded as reliable. This situation is particularly true for ages extrapolated beyond the oldest Chron Control. . If the entire Chronology is considered reliable, AgeBoundOlder is assigned the oldest sample age rounded up to the nearest 10. Thus, for 12564 BP, AgeBoundOlder is 12570.
 * **`notes`**: Free form notes or comments about the Aggregate Chronology.
 
-## ChronControls {#ChronControls}
+## `chroncontrols` {#ChronControls}
 
 This table stores data for Chronology Controls, which are the age-depth control points used for age models. These controls may be geophysical controls, such as radiocarbon dates, but include many other kinds of age controls, such as biostratigraphic controls, archaeological cultural associations, and volcanic tephras. In the case of radiocarbon dates, a Chronology Control may not simply be the raw radiocarbon date reported by the laboratory, but perhaps a radiocarbon date corrected for an old carbon reservoir, a calibrated radiocarbon date, or an average of several radiocarbon dates from the same level. A common control for
 lake-sediment cores is the age of the top of the core, which may be the year the core was taken or perhaps an estimate of 0 BP if a few cm of surficial sediment were lost.
@@ -44,9 +44,9 @@ lake-sediment cores is the age of the top of the core, which may be the year the
 showTable(db, 'chroncontrols')
 ```
 
-* **`chroncontrolid (primary key)`**: An arbitrary Chronology Control identification number.
-* **`chronologyid (foreign key)`**: Chronology to which the ChronControl belongs. Field links to the Chronolgies table.
-* **`chroncontroltypeid (foreign key)`**: The type of Chronology Control. Field links to the [`chroncontroltypes`](#ChronControlTypes) table.
+* **`chroncontrolid` (primary key)**: An arbitrary Chronology Control identification number.
+* **`chronologyid` (foreign key)**: Chronology to which the ChronControl belongs. Field links to the Chronolgies table.
+* **`chroncontroltypeid` (foreign key)**: The type of Chronology Control. Field links to the [`chroncontroltypes`](#ChronControlTypes) table.
 * **`depth`**: Depth of the Chronology Control in cm.
 * **`thickness`**: Thickness of the Chronology Control in cm.
 * **`age`**: Age of the Chronology Control.
@@ -54,7 +54,7 @@ showTable(db, 'chroncontrols')
 * **`agelimitolder`**: The older age limit of a Chronology Control.
 * **`notes`**: Free form notes or comments about the Chronology Control.
 
-## ChronControlTypes {#ChronControlTypes}
+## `chroncontroltypes` {#ChronControlTypes}
 
 Lookup table of Chronology Control Types. This table is referenced by the [`chroncontrols`](#ChronControls) table.
 
@@ -62,10 +62,10 @@ Lookup table of Chronology Control Types. This table is referenced by the [`chro
 showTable(db, 'chroncontroltypes')
 ```
 
-* **`chroncontroltypeid (primary key)`**: An arbitrary Chronology Control Type identification number.
+* **`chroncontroltypeid` (primary key)**: An arbitrary Chronology Control Type identification number.
 * **`chroncontroltype`**: The type of Chronology Control object. Chronology Controls include such geophysical controls as radiocarbon dates, calibrated radiocarbon dates, averages of several radiocarbon dates, potassium-argon dates, and thermoluminescence dates, as well as biostratigraphic controls, sediment stratigraphic contols, volcanic tephras, archaeological cultural associations, and any other types of age controls. In general these are calibrated or calendar year dates Before Present (BP). **Some ChronControlTypes are in Radiocarbon Years, so caution must be exercised.**
 
-## Chronologies {#Chronologies}
+## `chronologies` {#Chronologies}
 
 This table stores Chronology data. A Chronology refers to an explicit chronology assigned to a Collection Unit. A Chronology has Chronology Controls, the actual age-depth control points, which are stored in the [`chroncontrols`](#ChronControls) table. A Chronology is also based on an Age Model, which may be a numerical method that fits a curve to a set of age-depth control points or may simply be individually dated Analysis Units.
 
@@ -79,10 +79,10 @@ A younger and older age bounds are assigned to the Chronology. Within these boun
 showTable(db, 'chronologies')
 ```
 
-* **`chronologyid (primary key)`**: An arbitrary Chronology identification number.
-* **`collectionunitid (foreign key)`**: Collection Unit to which the Chronology applies. Field links to the `collectionunits`[#CollectionUnits] table.
-* **`agetypeid (foreign key)`**: Age type or units. Field links to the `AgeTypes`{.interpreted-text     role="ref"} table.
-* **`contactid (foreign key)`**: Person who developed the Age Model. Field links to the `contacts`[#Contacts] table.
+* **`chronologyid` (primary key)**: An arbitrary Chronology identification number.
+* **`collectionunitid` (foreign key)**: Collection Unit to which the Chronology applies. Field links to the `collectionunits`[#CollectionUnits] table.
+* **`agetypeid` (foreign key)**: Age type or units. Field links to the `AgeTypes`{.interpreted-text     role="ref"} table.
+* **`contactid` (foreign key)**: Person who developed the Age Model. Field links to the `contacts`[#Contacts] table.
 * **`isdefault`**: Indicates whether the Chronology is a default chronology or not. Default status is determined by a Neotoma data steward. Collection Units may have more than one default Chronology, but may have only one default Chronology per Age Type. Thus, there may be a default radiocarbon year Chronology and a default calibrated radiocarbon year Chronology, but only one of each. Default Chronologies may be used by the Neotoma web site, or other web sites, for displaying default diagrams or time series of data. Default Chronologies may also be of considerable use for actual research purposes; however, users may of course choose to develop their own chronologies.
 * **`chronologyname`**: Optional name for the Chronology. Some examples are:
   * COHMAP chron 1 A Chronology assigned by the COHMAP project.
@@ -136,7 +136,7 @@ WHERE st.sitename = 'Wolsfeld Lake'
   ORDER BY cc.depth ASC;
 ```
 
-## AggregateSampleAges {#AggregateSampleAges}
+## `aggregatesampleages` {#AggregateSampleAges}
 
 This table stores the links to the ages of samples in an Aggregate Dataset. The table is necessary because samples may be from Collection Units with multiple chronologies, and this table stores the links to the sample ages desired for the Aggregate Dataset.
 
@@ -144,11 +144,11 @@ This table stores the links to the ages of samples in an Aggregate Dataset. The 
 showTable(db, 'aggregatesampleages')
 ```
 
-* **`aggregatedatasetid (primary key, foreign key)`**: Aggregate Dataset identification number. Field links to the
+* **`aggregatedatasetid` (primary key, foreign key)**: Aggregate Dataset identification number. Field links to the
     `aggregatedatasets`[#AggregateDatasets] table.
-* **`aggregatechronid (primary key, foreign key)`**: Aggregate Chronology identification number Field links to the
+* **`aggregatechronid` (primary key, foreign key)**: Aggregate Chronology identification number Field links to the
     `aggregatechronologies`[#AggregateChronologies] table.
-* **`sampleageid (primary key, foreign key)`**: Sample Age ID number. Field links to the
+* **`sampleageid` (primary key, foreign key)**: Sample Age ID number. Field links to the
     `sampleages`[#SampleAges] table.
 
 ### SQL Example
@@ -191,10 +191,10 @@ This table stores geochronologic data. Geochronologic measurements are from geoc
 showTable(db, 'geochronology')
 ```
 
-* **`geochronid (primary key)`**:   An arbitrary Geochronologic identificantion number.
-* **`sampleid (foreign key)`**:   Sample identification number. Field links to [`samples`](#Samples) table.
-* **`geochrontypeid (foreign key)**:   identification number for the type of geochronologic analysis, e.g. «carbon-14», **thermoluminescence`**. Field links to the [`geochrontypes`](#GeochronTypes) table.
-* **`agetypeid (foreign key)`**:   Identification number for the age units, e.g. «Radiocarbon years BP», «Calibrated radiocarbon years BP».
+* **`geochronid` (primary key)**:   An arbitrary Geochronologic identificantion number.
+* **`sampleid` (foreign key)**:   Sample identification number. Field links to [`samples`](#Samples) table.
+* **`geochrontypeid` (foreign key)**: identification number for the type of geochronologic analysis, e.g. «carbon-14», **thermoluminescence**. Field links to the [`geochrontypes`](#GeochronTypes) table.
+* **`agetypeid` (foreign key)**:   Identification number for the age units, e.g. «Radiocarbon years BP», «Calibrated radiocarbon years BP».
 * **`age`**:   Reported age value of the geochronologic measurement.
 * **`errorolder`**: The older error limit of the age value. For a date reported with ±1 SD or σ, the ErrorOlder and ErrorYounger values are this value.
 * **`erroryounger`**:   The younger error limit of the age value.
@@ -229,7 +229,7 @@ WHERE st.sitename ='Montezuma Well'
 ORDER BY au.depth;
 ```
 
-## GeochronPublications {#GeochronPublications}
+## `geochronpublications` {#GeochronPublications}
 
 Publications in which Geochronologic measurements are reported. Many older radiocarbon dates are reported in the journal *Radiocarbon*. Dates may be reported in multiple publications. The *publication* could be a database such as the online Canadian Archaeological Radiocarbon Database.
 
@@ -237,12 +237,12 @@ Publications in which Geochronologic measurements are reported. Many older radio
 showTable(db, 'geochronpublications')
 ```
 
-* **`geochronid (primary key, foreign key)`**: Geochronologic identification number. Field links to the
+* **`geochronid` (primary key, foreign key)**: Geochronologic identification number. Field links to the
     `geochronology`[#Geochronology] table.
-* **`publicationid (primary key, foreign key)`**: Publication identification number. Field links to the
+* **`publicationid` (primary key, foreign key)**: Publication identification number. Field links to the
     `publications`[#Publications] table.
 
-## GeochronTypes {#GeochronTypes}
+## `geochrontypes` {#GeochronTypes}
 
 Lookup table for Geochronology Types. The table is referenced by the `geochronology`[#Geochronology] table.
 
@@ -250,10 +250,10 @@ Lookup table for Geochronology Types. The table is referenced by the `geochronol
 showTable(db, 'geochrontypes')
 ```
 
-* **`geochrontypeid (primary key)`**: Geochronology Type identification number.
+* **`geochrontypeid` (primary key)**: Geochronology Type identification number.
 * **`geochrontype`**: Type of Geochronologic measurement.
 
-## RelativeAgePublications {#RelativeAgePublications}
+## `relativeagepublications` {#RelativeAgePublications}
 
 This table stores Publications in which Relative Ages are reported for [`collectionunits`](#CollectionUnits)`.
 
@@ -261,12 +261,12 @@ This table stores Publications in which Relative Ages are reported for [`collect
 showTable(db, 'relativeagepublications')
 ```
 
-* **`relativeageid (primary key, foreign key)`**: Relative Ages identification number. Field links to the
+* **`relativeageid` (primary key, foreign key)**: Relative Ages identification number. Field links to the
     `relativeages`[#RelativeAges] table.
-* **`publicationid (primary key, foreign key)`**: Publication identification number. Field links to
+* **`publicationid` (primary key, foreign key)**: Publication identification number. Field links to
     `publications`[#Publications] table.
 
-## RelativeAges {#RelativeAges}
+## `relativeages` {#RelativeAges}
 
 Lookup table of RelativeAges. Table is referenced by the `relativechronology`[#RelativeChronology] table.
 
@@ -298,7 +298,7 @@ INNER JOIN ndb.relativeages AS ra ON ras.relativeagescaleid = ra.relativeagescal
 WHERE ras.relativeagescale = 'North American land mammal ages';
 ```
 
-## RadiocarbonCalibration {#RadiocarbonCalibration}
+## `radiocarboncalibration` {#RadiocarbonCalibration}
 
 Radiocarbon calibraton table. This table is intended for quick calibraton of age-model radiocarbon dates. These calibrated dates are for perusal and data exploration only. Please see Section *2.5* for a full discussion.
 
@@ -310,7 +310,7 @@ showTable(db, 'radiocarboncalibration')
     increments.
 * **`calyrbp`**: Age in calibrated radiocarbon years BP.
 
-## RelativeAgeScales {#RelativeAgeScales}
+## `relativeagescales` {#RelativeAgeScales}
 
 Lookup table of Relative Age Scales. Table is referenced by the [`relativeages`](#RelativeAges) table.
 
@@ -318,7 +318,7 @@ Lookup table of Relative Age Scales. Table is referenced by the [`relativeages`]
 showTable(db, 'relativeagescales')
 ```
 
-* **`relativeagescaleid (primary key)`**: An arbitrary Relative Age Scale identification number.
+* **`relativeagescaleid` (primary key)**: An arbitrary Relative Age Scale identification number.
 * **`relativeagescale`**: Relative Age Scale. The table stores the following Relative Age
   * Scales:
     * Archaeological time scale
@@ -328,7 +328,7 @@ showTable(db, 'relativeagescales')
     * North American land mammal ages
     * Quaternary event classification
 
-## RelativeAgeUnits {#RelativeAgeUnits}
+## `relativeageunits` {#RelativeAgeUnits}
 
 Lookup table of RelativeAgeUnits. Table is referenced by the [`relativeages`](#RelativeAges) table.
 
@@ -336,7 +336,7 @@ Lookup table of RelativeAgeUnits. Table is referenced by the [`relativeages`](#R
 showTable(db, 'relativeageunits')
 ```
 
-* **`relativeageunitid (primary key)`**: An arbitrary Relative Age Unit identification number.
+* **`relativeageunitid` (primary key)**: An arbitrary Relative Age Unit identification number.
 * **`relativeageunit`**: Relative Age Unit.
 
 ```{sql, relageunits, connection=db}
@@ -360,14 +360,14 @@ This table stores relative chronologic data. Relative Ages are assigned to Analy
 showTable(db, 'relativechronology')
 ```
 
-* **`relativechronid (primary key)`**: An arbitrary Relative Chronology identification number.
-* **`analysisunitid (foreign key)`**: Analysis Unit identification number. Field links to the
+* **`relativechronid` (primary key)**: An arbitrary Relative Chronology identification number.
+* **`analysisunitid` (foreign key)**: Analysis Unit identification number. Field links to the
     `AnalysisUnits`[#AnalysisUnits] table.
-* **`relativeageid (foreign key)`**: Relative Age identification number. Field links to the
+* **`relativeageid` (foreign key)**: Relative Age identification number. Field links to the
     `RelativeAges`[#RelativeAges] lookup table.
 * **`notes`**: Free form notes or comments.
 
-## Tephrachronology {#Tephrachronology}
+## `tephrachronology` {#Tephrachronology}
 
 This table stores tephrachronologic data. The table relates Analysis Units with dated tephras in the [`tephras`](#Tephras) table. These are tephras with established ages that are used form a chronology. The tephras are typically not directly dated at the Site of the Analysis Unit, but have been dated at other sites. A directly dated tephra, *e.g.* an argon-argon date, belongs in the [`geochronology`](#Geochronology) table.
 
@@ -375,12 +375,12 @@ This table stores tephrachronologic data. The table relates Analysis Units with 
 showTable(db, 'tephrachronologies')
 ```
 
-* **`tephrachronid (primary key)`** An arbitrary Tephrachronology identification number.
-* **`analysisunitid (foreign key)`** Analysis Unit identification number. Field links to the `AnalysisUnits`[#AnalysisUnits] table. The tephra may be contained within the AnalysisUnit, especially in excavations, or the AnalysisUnit may be assigned specifically to the tephra, particulary with cores.
-* **`tephraid (foreign key)`** Tephra identification number. Field links to the `Tephras`[#Tephras] table.
+* **`tephrachronid` (primary key)** An arbitrary Tephrachronology identification number.
+* **`analysisunitid` (foreign key)** Analysis Unit identification number. Field links to the `AnalysisUnits`[#AnalysisUnits] table. The tephra may be contained within the AnalysisUnit, especially in excavations, or the AnalysisUnit may be assigned specifically to the tephra, particulary with cores.
+* **`tephraid` (foreign key)** Tephra identification number. Field links to the `Tephras`[#Tephras] table.
 * **`notes`** Free form notes or comments about the tephra.
 
-## Tephras {#Tephras}
+## `tephras` {#Tephras}
 
 Tephras lookup table. This table stores recognized tephras with established ages. Referenced by the [`tephrachronology`](#Tephrachronology) table.
 
@@ -388,7 +388,7 @@ Tephras lookup table. This table stores recognized tephras with established ages
 showTable(db, 'tephras')
 ```
 
-* **`tephraid (primary key)`**: An arbitrary Tephra identification number.
+* **`tephraid` (primary key)**: An arbitrary Tephra identification number.
 * **`tephraname**: name of the tephra, e.g. **mazama`**.
 * **`c14age`**: Age of the tephra in ^14^C yr BP. For example, Hallett et al. (1997) provide an estimate of the age of the Mazama tephra based on radiocarbon dating of plant macrofossils in lake sediments encasing the tephra.
 * **`c14ageyounger`**: Younger age estimate of the tephra in ^14^C yr BP.

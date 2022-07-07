@@ -29,9 +29,9 @@ The examples above are datasets predefined in the database. New aggregate datase
 showTable(db, 'aggregatedatasets')
 ```
 
-* **`aggregatedatasetid (primary key)`**:   An arbitrary Aggregate Dataset identification number.
+* **`aggregatedatasetid` (primary key)**:   An arbitrary Aggregate Dataset identification number.
 * **`aggregatedatasetname`**:   Name of Aggregate Dataset.
-* **`aggregateordertypeid (foreign key)`**:   Aggregate Order Type identification number. Field links to the [`aggregateordertypes`](#AggregateOrderTypes) lookup table.
+* **`aggregateordertypeid` (foreign key)**:   Aggregate Order Type identification number. Field links to the [`aggregateordertypes`](#AggregateOrderTypes) lookup table.
 * **`notes`**:   Free form notes about the Aggregate Order Type.
 
 ## `aggregateordertypes` {#AggregateOrderTypes}
@@ -43,7 +43,7 @@ Lookup table for Aggregate Order Types. Table is referenced by the
 showTable(db, 'aggregateordertypes')
 ```
 
-* **`aggregateordertypeid (primary key)`**:   An arbitrary Aggregate Order Type identification number.
+* **`aggregateordertypeid` (primary key)**:   An arbitrary Aggregate Order Type identification number.
 * **`aggregateordertype`**:   The Aggregate Order Type.
 * **`notes`**: Free form notes or comments about the Aggregate Order Type.  The Aggregate Order Types are:
   * **Latitude**: AggregateDataset samples are ordered by, in order of priority, either (1) [`collectionunits`](#CollectionUnits) GPSLatitude or (2) the mean of [`sites`](#Sites).LatitudeNorth and [`sites`](#Sites) LatitudeSouth.
@@ -62,7 +62,7 @@ This table is a lookup table of for types of Collection Units, or Collection Typ
 showTable(db, 'collectiontypes')
 ```
 
-* **`colltypeid (primary key)`**: An arbitrary Collection Type identification number.
+* **`colltypeid` (primary key)**: An arbitrary Collection Type identification number.
 
 * **`colltype`**: The Collection Type. Types include cores, sections, excavations, and
     animal middens. Collection Units may be modern collections, surface
@@ -78,10 +78,10 @@ This table stores data for Collection Units.
 showTable(db, 'collectionunits')
 ```
 
-* **`collectionunitid (primary key)`**:   An arbitrary Collection Unit identification number.
-* **`siteid (foreign key)`**:   Site where CollectionUnit was located. Field links to [`sites`](#Sites) table.
-* **`colltypeid (foreign key)`**:   Type of Collection Unit. Field links to the [`collectiontypes`](#CollectionTypes) table.
-* **`depenvtid (foreign key)`**:   Depositional environment of the CollectionUnit. Normally, this key refers to the modern environment. For example, the site may be located on a colluvial slope, in which case the Depositional Environment may be Colluvium or Colluvial Fan. However, an excavation may extend into alluvial sediments, which represent a different depositional environment. These are accounted for by the Facies of the AnalysisUnit. Field links to the [`depenvttypes`](#DepEnvtTypes) table.
+* **`collectionunitid` (primary key)**:   An arbitrary Collection Unit identification number.
+* **`siteid` (foreign key)**:   Site where CollectionUnit was located. Field links to [`sites`](#Sites) table.
+* **`colltypeid` (foreign key)**:   Type of Collection Unit. Field links to the [`collectiontypes`](#CollectionTypes) table.
+* **`depenvtid` (foreign key)**:   Depositional environment of the CollectionUnit. Normally, this key refers to the modern environment. For example, the site may be located on a colluvial slope, in which case the Depositional Environment may be Colluvium or Colluvial Fan. However, an excavation may extend into alluvial sediments, which represent a different depositional environment. These are accounted for by the Facies of the AnalysisUnit. Field links to the [`depenvttypes`](#DepEnvtTypes) table.
 * **`handle`**:   Code name for the Collection Unit. This code may be up to 10 characters, but an effort is made to keep these to 8 characters or less. Data are frequently distributed by Collection Unit, and the Handle is used for file names.
 * **`collunitname`**:   Name of the Collection Unit. Examples: Core BPT82A, Structure 9, P4A Test 57. If faunal data are reported from a site or locality without explicit Collection Units, then data are assigned to a single Collection Unit with the name «Locality».
 * **`colldate`**:   Date Collection Unit was collected.
@@ -91,7 +91,7 @@ showTable(db, 'collectionunits')
 * **`gpsaltitude`**:   Precise altitude of the Collection Unit, typically taken with a GPS or precisely obtained from a map.
 * **`gpserror`**:   Error in the horizontal GPS coordinates, if known.
 * **`waterdepth`**:   Depth of water at the Collection Unit location. This field applies mainly to Collection Units from lakes.
-* **`substrateid (foreign key)`**:   Substrate or rock type on which the Collection Unit lies. Field links to the RockTypes table. This field is especially used for rodent middens.
+* **`substrateid` (foreign key)**:   Substrate or rock type on which the Collection Unit lies. Field links to the RockTypes table. This field is especially used for rodent middens.
 * **`slopeaspect`**:   For Collection Units on slopes, the horizontal direction to which a slope faces measured in degrees clockwise from north. This field is especially used for rodent middens.
 * **`slopeangle`**:   For Collection Units on slopes, the angle of slope from horizontal. The `slopeangle` field is especially used for rodent middens.
 * **`location`**:   Short description of the location of the Collection Unit within the site.
@@ -125,8 +125,8 @@ This table lists the Principle Investigators for Datasets.
 showTable(db, 'datasetpis')
 ```
 
-* **`datasetid (primary key, foreign key)`**:   Dataset identification number. Field links to Dataset table.
-* **`contactid (primary key, foreign key)`**:   Contact identification number. Field links to
+* **`datasetid` (primary key, foreign key)**:   Dataset identification number. Field links to Dataset table.
+* **`contactid` (primary key, foreign key)**:   Contact identification number. Field links to
     [`contacts`](#Contacts) table.
 * **`piorder`**:   Order in which PIs are listed.
 
@@ -138,8 +138,8 @@ This table lists the publications for datasets.
 showTable(db, 'datasetpublications')
 ```
 
-* **`datasetid (primary key, foreign key)`**:   Dataset identification number. Field links to [`datasets`](#Datasets) table.
-* **`publicationid (primary key, foreign key)`**:   Publication identification number. Field links to [`publications`](#Publications) table.
+* **`datasetid` (primary key, foreign key)**:   Dataset identification number. Field links to [`datasets`](#Datasets) table.
+* **`publicationid` (primary key, foreign key)**:   Publication identification number. Field links to [`publications`](#Publications) table.
 * **`primarypub`**:   Is «True» if the publication is the primary publication for the dataset.
 
 ## `datasets` {#Datasets}
@@ -150,10 +150,10 @@ This table stores the data for Datasets. A Dataset is the set of samples for a p
 showTable(db, 'datasets')
 ```
 
-* **`datasetid (primary key)`**:   An arbitrary Dataset identification number.
-* **`collectionunitid (foreign key)`**:   Collection Unit identification number. Field links to the
+* **`datasetid` (primary key)**:   An arbitrary Dataset identification number.
+* **`collectionunitid` (foreign key)**:   Collection Unit identification number. Field links to the
     [`collectionunits`](#CollectionUnits) table.
-* **`datasettypeid (foreign key)`**:   Dataset Type identification number. Field links to the
+* **`datasettypeid` (foreign key)**:   Dataset Type identification number. Field links to the
     [`datasettypes`](#DatasetTypes) lookup table.
 * **`datasetname`**:   Optional name for the Dataset.
 * **`notes`**:   Free form notes or comments about the Dataset.
@@ -206,13 +206,13 @@ recompilations. See the description of the
 showTable(db, 'datasetsubmissions')
 ```
 
-* **`submissionid (primary key)`**:   An arbitrary submission identification number.
-* **`datasetid (foreign key)`**:   Dataset identification number. Field links to the [`datasets`](#Datasets) table. Datasets may occur
+* **`submissionid` (primary key)**:   An arbitrary submission identification number.
+* **`datasetid` (foreign key)**:   Dataset identification number. Field links to the [`datasets`](#Datasets) table. Datasets may occur
     multiple times in this table (e.g. once for the original compilation into a different database and a second time for the recompilation into Neotoma).
-* **`projectid (foreign key)`**:   Database project responsible for the submission or compilation.
-* **`contactid (foreign key)`**:   Contact identification number. Field links to the [`contacts`](#Contacts) table. The Contact is the person who submitted, resubmitted, compiled, or recompiled the data. This person is not necessarily the Dataset PI; it is the person who submitted the data or compiled the data from the literature.
+* **`projectid` (foreign key)**:   Database project responsible for the submission or compilation.
+* **`contactid` (foreign key)**:   Contact identification number. Field links to the [`contacts`](#Contacts) table. The Contact is the person who submitted, resubmitted, compiled, or recompiled the data. This person is not necessarily the Dataset PI; it is the person who submitted the data or compiled the data from the literature.
 * **`submissiondate`**:   Date of the submission, resubmission, compilation, or recompilation.
-* **`submissiontypeid (foreign key)`**:   Submission Type identification number. Field links to the [`datasetsubmissiontypes`](#DatasetSubmissionTypes) table.
+* **`submissiontypeid` (foreign key)**:   Submission Type identification number. Field links to the [`datasetsubmissiontypes`](#DatasetSubmissionTypes) table.
 * **`notes`**:   Free form notes or comments about the submission.
 
 ## `datasetsubmissiontypes` {#DatasetSubmissionTypes}
@@ -223,7 +223,7 @@ Lookup table of Dataset Submission Types. Table is referenced by the [`datasetsu
 showTable(db, 'datasetsubmissiontypes')
 ```
 
-* **`submissiontypeid (primary key)`**:   An arbitrary Submission Type identification number.
+* **`submissiontypeid` (primary key)**:   An arbitrary Submission Type identification number.
 * **`submissiontype`**:   Type of submission. The database has the following types:
   * Original submission from data contributor
   * Resubmission or revision from data contributor
@@ -273,7 +273,7 @@ Lookup table for Dataset Types. Table is referenced by the [`datasets`](#Dataset
 showTable(db, 'datasetsubmissions')
 ```
 
-* **`datasettypeid (primary key)`**:   An arbitrary Dataset Type identification number.
+* **`datasettypeid` (primary key)**:   An arbitrary Dataset Type identification number.
 * **`datasettype`**:   The Dataset type, including the following:
   * geochronologic
   * loss-on-ignition
@@ -295,7 +295,7 @@ the [`collectionunits`](#CollectionUnits) table.
 showTable(db, 'depenvttypes')
 ```
 
-* **`depenvtid (primary key)`**:   An arbitrary Depositional Environment Type identification number.
+* **`depenvtid` (primary key)**:   An arbitrary Depositional Environment Type identification number.
 * **`depenvt`**:   Depositional Environment.
 * **`depenvthigherid`**:   The Depositional Environment Types are hierarchical. DepEnvtHigherID is the DepEnvtID of the higher ranked Depositional Environment. The linked example provides some context:
 

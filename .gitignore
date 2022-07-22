@@ -1,6 +1,8 @@
+_book/
 _bookdown_files/
 libs/
 **/*.bib
+**/*.html 
 # ignore all html files except:
 !**/mathjax_header.html
 # R and Rstudio specific files

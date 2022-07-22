@@ -330,3 +330,26 @@ WITH RECURSIVE dephierarchy AS (
 )
 SELECT * FROM dephierarchy;
 ```
+
+### SQL Example
+
+This query uses a recursive CTE to list every depositional environment and the top level environment to which it relates:
+
+```  {sql, deptypetoplevels, connection=db}
+WITH RECURSIVE dephierarchy AS 
+(SELECT de.depenvtid,
+        de.depenvt,
+        ARRAY[de.depenvt::varchar] AS deagg 
+ FROM ndb.depenvttypes AS de 
+ UNION ALL 
+ SELECT de.depenvtid, 
+        de.depenvt, 
+        dephierarchy.deagg || de.depenvt 
+ FROM ndb.depenvttypes AS de  
+ INNER JOIN dephierarchy ON de.depenvthigherid = dephierarchy.depenvtid
+ WHERE NOT de.depenvtid = dephierarchy.depenvtid)
+ SELECT depenvtid, 
+        depenvt,
+        deagg[1] FROM dephierarchy 
+ WHERE dephierarchy.deagg[1] = ANY(SELECT depenvt FROM ndb.depenvttypes AS det WHERE det.depenvthigherid = det.depenvtid);
+```

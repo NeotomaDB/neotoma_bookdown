@@ -5,6 +5,9 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 rmd_files: ["index.Rmd", 
             "chapters/01-neotoma_introduction.Rmd",
+            "chapters/working_with_db.md",
+            "chapters/startingR.md",
+            "chapters/RSiteSearch.md",
             "chapters/sql_quickly.Rmd",
             "chapters/db_design_concepts.Rmd",
             "chapters/tables/neotoma_tables.Rmd",

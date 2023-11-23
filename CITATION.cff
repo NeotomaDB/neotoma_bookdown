@@ -4,6 +4,8 @@ authors:
   - family-names: Goring
     given-names: Simon James
     orcid: https://orcid.org/0000-0002-2700-4605
+  - family-name: Grimm
+    given-names: Eric C.
 title: Neotoma Paleoecology Database SQL Database Manual
 version: v0.1.0
 date-released: 2023-05-05

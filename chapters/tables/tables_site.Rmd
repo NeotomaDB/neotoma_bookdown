@@ -243,7 +243,7 @@ showTable(db, 'sites')
 * **`latitudenorth`**: North bounding latitude for a site.
 * **`longitudewest`**: West bounding longitude for a site.
 * **`latitudesouth`**: South bounding latitude for a site.
-* **`altitude`**: Altitude of a site in meters.
+* **`altitude`**: Altitude of a site in meters. **NOTE** Altitude may be positive or negative, but should not reflect the depth of the sample site within a basin (ocean or lake). This is described by the [`collectionunits`](#CollectionUnits) `waterdepth` field.
 * **`area`**: Area of a site in hectares.
 * **`sitedescription`**: Free form description of a site, including such information as    physiography and vegetation around the site.
 * **`notes`**: Free form notes or comments about the site.

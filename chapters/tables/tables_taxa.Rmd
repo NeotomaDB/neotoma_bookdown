@@ -2,16 +2,16 @@
 
 ## `ecolgroups` {#ecolgroups}
 
-Ecological groups represent a method for organizing or representing taxa. The ecological group to which a taxon belongs depends both on the taxon and the dataset type. Taxa are assigned to sets of Ecological Groups. A taxon may be assigned to more than one Ecological Group, representing different schemes for organizing taxa.
+Ecological groups represent a method for organizing or representing taxa within particular ecological settings defined within the [`ecolsetname`](#EcolSetTypes) table. Some taxa have a single associated ecological group, others are associated with multiple groups. The taxon *Abies*, a tree genus, has only a single taxon group (*TRSH*, trees and shrubs), while the taxon *cf. Larix*, also a tree genus, is associated with *TRSH* group as well as the ecological group *UNID*. *UNID* represents unidentified taxa, since the term `cf`, as indicated in the [`taxa`](#Taxa) table means that the identified pollen resemble, but is not neccessarily *Larix*.
+
+This table is the JOIN table between the [`ecolgrouptypes`](#EcolGroupTypes) which contain the full descriptive name of the ecological groups, and the taxa and ecological setting within which the taxa are found, with respect to the samples.
 
 ```{r, ecolgroupstable, echo=FALSE}
 showTable(db, 'ecolgroups')
 ```
 
 * **`taxonid (primary key, foreign key)`**: Taxon identification number. The field links to the [`taxa`](#Taxa) table.
-
 * **`ecolsetid (primary key, foreign key)`**: Ecological Set identification number. Field links to the [`ecolsettypes`](#EcolSetTypes) table.
-
 * **`ecolgroupid (foreign key)`**: A four-letter Ecological Group identification code. Field links to the [`ecolgrouptypes`](#EcolGroupTypes) table.
 
 ### SQL Example
@@ -25,16 +25,13 @@ SELECT DISTINCT
    est.ecolsetname,
    egt.ecolgroup
 FROM ndb.ecolgroups AS eg
-INNER JOIN ndb.ecolsettypes AS est ON est.ecolsetid = eg.ecolsetid
+INNER JOIN   ndb.ecolsettypes AS est ON   est.ecolsetid = eg.ecolsetid
 INNER JOIN ndb.ecolgrouptypes AS egt ON egt.ecolgroupid = eg.ecolgroupid
-INNER JOIN ndb.taxa AS tx ON tx.taxonid = eg.taxonid
+INNER JOIN           ndb.taxa AS tx  ON      tx.taxonid = eg.taxonid
 WHERE
    tx.taxagroupid = 'VPL'
 GROUP BY
-   tx.taxagroupid,
-   eg.ecolgroupid,
-   est.ecolsetname,
-   egt.ecolgroup;
+   tx.taxagroupid, eg.ecolgroupid, est.ecolsetname, egt.ecolgroup;
 ```
 
 ### SQL Example
@@ -47,7 +44,7 @@ SELECT
    tx.taxonname
 FROM
    ndb.taxa AS tx
-   INNER JOIN ndb.ecolgroups AS eg ON tx.taxonid = eg.taxonid
+   INNER JOIN     ndb.ecolgroups AS  eg ON      tx.taxonid = eg.taxonid
    INNER JOIN ndb.ecolgrouptypes AS egt ON egt.ecolgroupid = eg.ecolgroupid
 WHERE egt.ecolgroup = 'Sirenia';
 ```
@@ -120,13 +117,13 @@ This query provides the preferred synonym in the database for *Bison alleni* alo
 ```{sql, BisonTaxonExample, connection=db}
 SELECT 
     syntx.taxonname AS preferred,
-    tx.taxonname AS original,
-    pub.citation AS publication,
-    syn.notes AS synonymnotes
+       tx.taxonname AS original,
+       pub.citation AS publication,
+          syn.notes AS synonymnotes
 FROM ndb.taxa AS tx
-  INNER JOIN ndb.synonymy AS syn ON syn.taxonid = tx.taxonid
-  INNER JOIN ndb.taxa AS syntx ON syn.reftaxonid = syntx.taxonid
-  INNER JOIN ndb.publications AS pub ON syn.publicationid = pub.publicationid
+  INNER JOIN     ndb.synonymy AS syn   ON       syn.taxonid = tx.taxonid
+  INNER JOIN         ndb.taxa AS syntx ON    syn.reftaxonid = syntx.taxonid
+  INNER JOIN ndb.publications AS pub   ON syn.publicationid = pub.publicationid
 WHERE syntx.taxonname = 'Bison alleni';
 ```
 
@@ -163,7 +160,7 @@ showTable(db, 'taxa')
     * Taxonomic, heterotypic, or subjective synonyms may be applied if the change does not effectively assign the specimen to a different taxon. Although two names may have been based on different type specimens, if further research has shown that these are in fact the same taxon, the name is changed to the accepted name. These synonymizations should not cause confusion. However, uncritical synonymization, although taxonomically correct, can result in loss of information, and should be avoided. For example, although a number of recent studies have shown that the Taxodiaceae should be merged with the Cupressaceae, simply synonymizing Taxodiaceae with Cupressaceae may expand the universe of taxa beyond that implied by the original investigator. For example, a palynologist in the southeastern United States may have used *Taxodiaceae* to imply **Taxodium**, which is the only genus of the family that has occurred in the region since the Pliocene, but used the the family name because, palynologically, *Taxodiuim* cannot be differentiated from other Taxodiaceae. However, well preserved *Taxodium* pollen grains can be differentiated from the other Cupressaceous genera in the regin, *Juniperus* and *Chamaecyperus*. Thus, the appropriate synonymization for *Taxodiaceae* in this region would be **Taxodium** or **Taxodium*-type*, which would retain the original taxonomic precision. On the other hand, the old *TCT* shorthand for *Taxodiaceae/Cupressaceae/Taxaceae* now becomes *Cupressaceae/Taxaceae* with no loss of information.
     * For alternative taxonomic desginations, the order may be changed. For example, **Ostrya/Carpinus** would be substituted for **Carpinus/Ostrya**.
 
-    The database has a number of conventions for uncertainty in identification. The uncertainty is included in the taxon name. Thus, **Acer* *pensylvanicum** and **Acer* cf. *A. pensylvanicum** are two different taxa.
+    The database has a number of conventions for uncertainty in identification. The uncertainty is included in the taxon name. Thus, *Acer pensylvanicum* and *Acer* cf. *A. pensylvanicum* are two different taxa.
 
     * **cf.**:   Latin *confer*, which means compare. In taxonomy *cf.* generally means that the specimen compares well to or is similar to the type referred, but the identification is uncertain. Uncertainty may arise for a number of reasons. The specimen may not be well preserved. It may be nondescript. There may be other similar taxa that can not be ruled out. The analyst may not have access to a complete reference or comparative collection for the group, so other related taxa cannot be excluded with certainty. For uncertainty at the species level, the convention in Neotoma is, for example, *Odocoileus* cf. *O. hemionus*, not *Odocoileus* cf. *hemionus*. Placement of *cf.* is important, because it indicates the taxonomic level of uncertaintly. For example, *Odocoileus* cf. *O. hemionus* implies that the identification of *Odocoileus* is secure, but that the species identification is not; whereas *cf.* *Odocoileus hemionus* implies that not even the genus identification is certain. A further implication in the latter example is that if the genus identification is correct, then the the specimen must also be that species, perhaps because of biogeographic considerations. Although commonly overlooked, it is also important to indicate the proper level of uncertainly in family-genus identifications. For example, Brassicaceae *cf.* *Brassica* implies that assignment to the Brassicaceae is secure; whereas cf. *Brassica* does not indicate that even the family identification is certain.
         In FAUNMAP, the uncertainty is recorded in a separate field from the taxon name, and for species it is not discernable whether the uncertainty is at the genus or species level. When data were imported from FAUNMAP, the *cf.* uncertainty was conservatively assigned to the genus level. Thus, if **Bison bison** was indicated to have *cf.* uncertainty, this record was imported as cf. *Bison bison** rather than *Bison* cf. *B. bison*. However, in many cases, the uncertainty in the original data was probably at the species level.
@@ -235,8 +232,7 @@ GROUP BY tx.taxonname,
 
 ### SQL Example
 
-This query lists all sites with *Zea mays* pollen by designating the
-VariableElement as *pollen*.
+This query lists all sites with *Zea mays* pollen by designating the VariableElement as *pollen*. This helps disambiguate sites where we may find plant macrofossil samples, or perhaps environmental DNA. Similarly, we may search for charcoal with size constraints (`variableelement='>100 µm'`).
 
 ``` {sql, zeaPollenSites, connection=db}
 SELECT DISTINCT tx.taxonname, 
@@ -284,16 +280,16 @@ This example gives a list of all sites with samples that have been ascribed some
 SELECT DISTINCT tx.taxonname, 
   tt.taphonomictype,
   st.sitename
-FROM ndb.taphonomictypes AS tt
+FROM         ndb.taphonomictypes AS tt
 INNER JOIN ndb.specimentaphonomy AS spet ON spet.taphonomictypeid = tt.taphonomictypeid
-INNER JOIN ndb.specimens AS spe ON spe.specimenid = spet.specimenid
-INNER JOIN ndb.data AS dt ON dt.dataid = spe.dataid
-INNER JOIN ndb.variables AS var ON var.variableid = dt.variableid
-INNER JOIN ndb.taxa AS tx ON var.taxonid = tx.taxonid
-INNER JOIN ndb.samples AS smp ON smp.sampleid = dt.sampleid
-INNER JOIN ndb.datasets AS ds ON ds.datasetid = smp.datasetid
-INNER JOIN ndb.collectionunits AS cu ON cu.collectionunitid = ds.collectionunitid
-INNER JOIN ndb.sites AS st ON st.siteid = cu.siteid;
+INNER JOIN         ndb.specimens AS spe  ON       spe.specimenid = spet.specimenid
+INNER JOIN              ndb.data AS dt   ON            dt.dataid = spe.dataid
+INNER JOIN         ndb.variables AS var  ON       var.variableid = dt.variableid
+INNER JOIN              ndb.taxa AS tx   ON          var.taxonid = tx.taxonid
+INNER JOIN           ndb.samples AS smp  ON         smp.sampleid = dt.sampleid
+INNER JOIN          ndb.datasets AS ds   ON         ds.datasetid = smp.datasetid
+INNER JOIN   ndb.collectionunits AS cu   ON  cu.collectionunitid = ds.collectionunitid
+INNER JOIN             ndb.sites AS st   ON            st.siteid = cu.siteid;
 ```
 
 ## `variablecontexts` {#VariableContexts}
@@ -382,12 +378,14 @@ SELECT st.sitename,
   COUNT(*) AS specimens,
   ri.repository
 FROM ndb.sites AS st
-INNER JOIN ndb.collectionunits AS cu ON cu.siteid = st.siteid
-INNER JOIN ndb.datasets AS ds ON ds.collectionunitid = cu.collectionunitid
-INNER JOIN ndb.repositoryspecimens AS rs ON rs.datasetid = ds.datasetid
-INNER JOIN ndb.repositoryinstitutions AS ri ON ri.repositoryid = rs.repositoryid
-WHERE st.sitename='Kimmswick'
-GROUP BY st.sitename, cu.collunitname, ri.repository;
+INNER JOIN        ndb.collectionunits AS cu ON           cu.siteid = st.siteid
+INNER JOIN               ndb.datasets AS ds ON ds.collectionunitid = cu.collectionunitid
+INNER JOIN    ndb.repositoryspecimens AS rs ON        rs.datasetid = ds.datasetid
+INNER JOIN ndb.repositoryinstitutions AS ri ON     ri.repositoryid = rs.repositoryid
+WHERE st.sitename = 'Kimmswick'
+GROUP BY st.sitename,
+         cu.collunitname,
+         ri.repository;
 ```
 
 ## `specimendates` {#SpecimenDates}
@@ -398,9 +396,9 @@ This table enables queries for dated specimens of indivual taxa. Although the `m
 showTable(db, 'specimendates')
 ```
 
-* **`specimendateid` (primary key)`**: An arbitrary specicimen date ID.
-* **`geochronid (foreign key)`**: Geochronologic identification number. Field links to the [`geochronology`](#Geochronology) table.
-* **`taxonid (foreign key)`**: Accepted name in Neotoma. Field links to [`taxa`](#Taxa) table.
-* **`variableelementid (foreign key)`**: Variable Element identification number. Field links to the [`variableelements`](#VariableElements) lookup table.
-* **`sampleid (primary key, foreign key)`**: Sample ID number. Field links to the [`samples`](#Samples) table.
+* **`specimendateid` (primary key)**: An arbitrary specicimen date ID.
+* **`geochronid` (foreign key)**: Geochronologic identification number. Field links to the [`geochronology`](#Geochronology) table.
+* **`taxonid` (foreign key)**: Accepted name in Neotoma. Field links to [`taxa`](#Taxa) table.
+* **`variableelementid` (foreign key)**: Variable Element identification number. Field links to the [`variableelements`](#VariableElements) lookup table.
+* **`sampleid` (primary key, foreign key)**: Sample ID number. Field links to the [`samples`](#Samples) table.
 * **`notes`**: Free form notes or comments about dated specimen.

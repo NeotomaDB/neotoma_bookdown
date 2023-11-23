@@ -5,3 +5,4 @@ jsonlite
 DT
 ggplot2
 crosstalk
+webshot

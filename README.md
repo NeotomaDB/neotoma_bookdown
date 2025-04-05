@@ -1,8 +1,12 @@
 # Neotoma Bookdown Manual
 
-[![lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+<!-- badges: start -->
+
+[![lifecycle](https://img.shields.io/badge/lifecycle-stable-orange.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![NSF-XXXXXXX](https://img.shields.io/badge/NSF-1948926-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1948926)
 [![DOI](https://zenodo.org/badge/487067181.svg)](https://zenodo.org/badge/latestdoi/487067181)
+
+<!-- badges: end -->
 
 Development of the [Neotoma Paleoecology Database manual](https://neotoma-manual.readthedocs.io/en/latest/) in the form of a [Bookdown](https://bookdown.org/yihui/bookdown/) document. This is a revision of the [ReStructured Markdown Neotoma manual](https://github.com/SimonGoring/neotomadb-manual), and as such has its own GitHub repository.
 
